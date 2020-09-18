@@ -31,7 +31,7 @@ const useFetchData = (config: AxiosRequestConfig): FetchData => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(`Error: ${err.response.data}`);
+        setError(`Error`);
         setLoading(false);
       });
 

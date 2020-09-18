@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 const Login = () => {
   const signIn = async () => {
@@ -21,7 +22,23 @@ const Login = () => {
       });
 
       if (result.type === 'success') {
-        await AsyncStorage.setItem('@token', result.user.id || '');
+        const {
+          email,
+          familyName,
+          givenName,
+          id,
+          name,
+          photoUrl,
+        } = result.user;
+        await AsyncStorage.setItem('@token', id || '');
+        await axios.post('http://192.168.1.6:3000/api/user', {
+          _id: id,
+          email,
+          familyName,
+          givenName,
+          name,
+          photoUrl,
+        });
       } else {
         console.log('cancelled');
       }
