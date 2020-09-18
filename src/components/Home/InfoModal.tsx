@@ -6,13 +6,19 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ScrollView,
-  Button,
+  TouchableWithoutFeedback,
+  ImageBackground,
+  TouchableOpacity,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Entypo } from '@expo/vector-icons';
 
 import useFetchData from '../../hooks/useFetchData';
 import ReviewStars from './ReviewStars';
+
+const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
 
 const InfoModal: React.FC<any> = ({ data }) => {
   const navigation = useNavigation();
@@ -28,6 +34,8 @@ const InfoModal: React.FC<any> = ({ data }) => {
     setScrollOffset(e.nativeEvent.contentOffset.y);
   };
 
+  if (loading || !data) return null;
+
   return (
     <Modal
       onSwipeComplete={() => setShowModal(false)}
@@ -39,37 +47,52 @@ const InfoModal: React.FC<any> = ({ data }) => {
       propagateSwipe
       scrollOffset={scrollOffset}
     >
-      <View style={{ flex: 0.4 }}>
+      <View style={{ flex: 0.5 }}>
         <ScrollView
           onScroll={handleScroll}
           scrollEventThrottle={16}
           style={styles.content}
         >
-          {data && (
-            <>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>{data.title}</Text>
-                <ReviewStars rating={data.vote_average} />
-              </View>
-              <Text style={styles.releaseDate}>
-                {data.release_date.split('-')[0]}
-              </Text>
-              <Text style={styles.overview}>{data.overview}</Text>
-              <Button
-                title="View Trailer"
-                onPress={() =>
-                  navigation.navigate('Trailer', {
-                    id:
-                      response.results.filter(
-                        (obj: any) => obj.type === 'Trailer'
-                      )[0].key ||
-                      response.results[0].key ||
-                      '',
-                  })
-                }
-              />
-            </>
-          )}
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{data.title}</Text>
+            <ReviewStars rating={data.vote_average} />
+          </View>
+          <Text style={styles.releaseDate}>
+            {data.release_date.split('-')[0]}
+          </Text>
+          <Text style={styles.overview}>{data.overview}</Text>
+          <TouchableOpacity
+            activeOpacity={0.99}
+            onPress={() =>
+              navigation.navigate('Trailer', {
+                id:
+                  response.results.filter(
+                    (obj: any) => obj.type === 'Trailer'
+                  )[0].key ||
+                  response.results[0].key ||
+                  '',
+              })
+            }
+          >
+            <ImageBackground
+              style={styles.trailer}
+              source={{ uri: imageUrl + data.backdrop_path }}
+            >
+              <LinearGradient
+                style={styles.gradient}
+                colors={['rgba(0,0,0,0.8)', 'transparent']}
+              >
+                <Text style={styles.trailerTitle}>
+                  {response.results?.filter(
+                    (obj: any) => obj.type === 'Trailer'
+                  )[0].name ||
+                    response.results[0].name ||
+                    ''}
+                </Text>
+              </LinearGradient>
+              <Entypo name="controller-play" size={80} color="white" />
+            </ImageBackground>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </Modal>
@@ -83,6 +106,7 @@ const styles = StyleSheet.create({
   },
   content: {
     margin: 0,
+    width: '100%',
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -105,6 +129,26 @@ const styles = StyleSheet.create({
   },
   overview: {
     marginTop: 10,
+  },
+  trailer: {
+    height: 250,
+    marginTop: 25,
+    marginBottom: 40,
+    resizeMode: 'contain',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  trailerTitle: {
+    color: 'white',
+    fontSize: 16,
+  },
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    padding: 10,
+    paddingBottom: 20,
   },
 });
 

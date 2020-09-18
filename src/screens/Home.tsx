@@ -5,7 +5,7 @@ import axios from '../../axiosInstance';
 import useFetchData from '../hooks/useFetchData';
 import InfoModal from '../components/Home/InfoModal';
 
-const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
+const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
 const Home = () => {
   const { height } = useWindowDimensions();

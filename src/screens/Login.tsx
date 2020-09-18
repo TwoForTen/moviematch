@@ -21,7 +21,6 @@ const Login = () => {
       });
 
       if (result.type === 'success') {
-        console.log(result);
         await AsyncStorage.setItem('@token', result.user.id || '');
       } else {
         console.log('cancelled');
