@@ -4,6 +4,8 @@ import axios from '../../axiosInstance';
 
 import InfoModal from '../components/Home/InfoModal';
 
+const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
+
 const Home = () => {
   const [results, setResults] = useState<any[]>([]);
   const { height } = useWindowDimensions();
@@ -15,11 +17,11 @@ const Home = () => {
 
   return (
     <>
-      {results.length > 0 && (
+      {results[0] && (
         <Image
           style={[styles.image, { height }]}
           source={{
-            uri: `https://image.tmdb.org/t/p/w500${results[0].poster_path}`,
+            uri: `${imageUrl}${results[0].poster_path}`,
           }}
         />
       )}

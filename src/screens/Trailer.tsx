@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 const Trailer = () => {
   return (
     <View>
-      <Text></Text>
+      <Text>Trailer</Text>
     </View>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign } from '@expo/vector-icons';
 
-import Home from '../screens/Home';
+import StackNavigation from './StackNavigation';
 import Watchlist from '../screens/Watchlist';
 import Profile from '../screens/Profile';
 
@@ -16,7 +16,7 @@ const BottomNavigation = () => {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={StackNavigation}
         options={{
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="home" size={size} color={color} />

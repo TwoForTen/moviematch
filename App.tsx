@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Login from './src/screens/Login';
-import BottomNavigation from './src/components/BottomNavigation';
+import Routes from './src/routes';
 
 export default function App() {
   const userToken = async () => await AsyncStorage.getItem('@token');
@@ -12,7 +12,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
-        {!!!userToken ? <Login /> : <BottomNavigation />}
+        {!!!userToken ? <Login /> : <Routes />}
       </SafeAreaView>
     </NavigationContainer>
   );
