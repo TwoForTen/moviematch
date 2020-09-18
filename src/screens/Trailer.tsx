@@ -1,11 +1,19 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../routes/StackNavigation';
 
-const Trailer = () => {
+type TrailerScreenRouteProp = RouteProp<RootStackParamList, 'Trailer'>;
+
+interface Props {
+  route: TrailerScreenRouteProp;
+}
+
+const Trailer = ({ route }: Props) => {
   return (
-    <View>
-      <Text>Trailer</Text>
-    </View>
+    <WebView
+      source={{ uri: `https://youtube.com/watch?v=${route.params.id}` }}
+    />
   );
 };
 

@@ -4,7 +4,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/Home';
 import Trailer from '../screens/Trailer';
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Home: undefined;
+  Trailer: { id: string };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const StackNavigation = () => {
   return (

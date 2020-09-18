@@ -6,22 +6,29 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ScrollView,
+  Button,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import axios from '../../../axiosInstance';
+import { useNavigation } from '@react-navigation/native';
 
 import ReviewStars from './ReviewStars';
 
 const InfoModal: React.FC<any> = ({ data }) => {
+  const navigation = useNavigation();
   const [showModal, setShowModal] = useState<boolean>(true);
   const [scrollOffset, setScrollOffset] = useState<number>();
+  const [trailerId, setTrailerId] = useState<string>('');
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setScrollOffset(e.nativeEvent.contentOffset.y);
   };
 
   useEffect(() => {
-    data && axios.get(`/movie/${data.id}/videos`).then(({ data }) => {});
+    data &&
+      axios
+        .get(`/movie/${data.id}/videos`)
+        .then(({ data }) => setTrailerId(data.results[0].key));
   }, [data]);
 
   return (
@@ -31,7 +38,7 @@ const InfoModal: React.FC<any> = ({ data }) => {
       isVisible={showModal}
       hasBackdrop={false}
       coverScreen={false}
-      swipeDirection={['down']}
+      // swipeDirection={['down']}
       propagateSwipe
       scrollOffset={scrollOffset}
     >
@@ -51,6 +58,14 @@ const InfoModal: React.FC<any> = ({ data }) => {
                 {data.release_date.split('-')[0]}
               </Text>
               <Text style={styles.overview}>{data.overview}</Text>
+              <Button
+                title="View Trailer"
+                onPress={() =>
+                  navigation.navigate('Trailer', {
+                    id: trailerId,
+                  })
+                }
+              />
             </>
           )}
         </ScrollView>
@@ -87,7 +102,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   overview: {
-    marginTop: 18,
+    marginTop: 10,
   },
 });
 
