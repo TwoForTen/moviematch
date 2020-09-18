@@ -31,19 +31,19 @@ const Login = () => {
   };
   return (
     <View style={styles.container}>
-      {/* <ImageBackground
+      <ImageBackground
         style={styles.bg}
         blurRadius={1}
         source={require('../../assets/loginBg.jpg')}
-      > */}
-      {/* <View style={styles.backdrop} /> */}
-      <TouchableOpacity activeOpacity={0.9} onPress={() => signIn()}>
-        <Image
-          source={require('../../assets/google.png')}
-          style={styles.image}
-        />
-      </TouchableOpacity>
-      {/* </ImageBackground> */}
+      >
+        <View style={styles.backdrop} />
+        <TouchableOpacity activeOpacity={0.9} onPress={() => signIn()}>
+          <Image
+            source={require('../../assets/google.png')}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      </ImageBackground>
     </View>
   );
 };
