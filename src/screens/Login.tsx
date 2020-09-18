@@ -13,6 +13,8 @@ const Login = () => {
   const signIn = async () => {
     try {
       const result = await Google.logInAsync({
+        iosClientId:
+          '1099080056337-4b5bgl821i3a05d3sjubbtdugnkjajda.apps.googleusercontent.com',
         androidClientId:
           '1099080056337-1rocgm0jmdq8qclu6tsnclbqsej9uob1.apps.googleusercontent.com',
         scopes: ['profile', 'email'],

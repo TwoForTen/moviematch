@@ -8,7 +8,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "baseUrl": ".",
-    "include": ["src/components", "src/custom.d.ts"]
+    "baseUrl": "."
   }
 }
