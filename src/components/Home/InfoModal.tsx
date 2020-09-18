@@ -6,15 +6,17 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ScrollView,
-  TouchableWithoutFeedback,
   ImageBackground,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Switch,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, AntDesign } from '@expo/vector-icons';
 
+import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
 import ReviewStars from './ReviewStars';
 
@@ -43,8 +45,8 @@ const InfoModal: React.FC<any> = ({ data }) => {
       isVisible={showModal}
       hasBackdrop={false}
       coverScreen={false}
-      // swipeDirection={['down']}
       propagateSwipe
+      swipeDirection={['down']}
       scrollOffset={scrollOffset}
     >
       <View style={{ flex: 0.5 }}>
@@ -53,45 +55,70 @@ const InfoModal: React.FC<any> = ({ data }) => {
           scrollEventThrottle={16}
           style={styles.content}
         >
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{data.title}</Text>
-            <ReviewStars rating={data.vote_average} />
-          </View>
-          <Text style={styles.releaseDate}>
-            {data.release_date.split('-')[0]}
-          </Text>
-          <Text style={styles.overview}>{data.overview}</Text>
-          <TouchableOpacity
-            activeOpacity={0.99}
-            onPress={() =>
-              navigation.navigate('Trailer', {
-                id:
-                  response.results.filter(
-                    (obj: any) => obj.type === 'Trailer'
-                  )[0].key ||
-                  response.results[0].key ||
-                  '',
-              })
-            }
-          >
-            <ImageBackground
-              style={styles.trailer}
-              source={{ uri: imageUrl + data.backdrop_path }}
-            >
-              <LinearGradient
-                style={styles.gradient}
-                colors={['rgba(0,0,0,0.8)', 'transparent']}
+          <View style={styles.hideModalIndicator} />
+          <TouchableOpacity activeOpacity={1}>
+            <>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>{data.title}</Text>
+                <ReviewStars rating={data.vote_average} />
+              </View>
+              <Text style={styles.releaseDate}>
+                {data.release_date.split('-')[0]}
+              </Text>
+              <View style={styles.watchedSection}>
+                <View style={{ flexDirection: 'row' }}>
+                  <AntDesign name="check" size={24} color={theme.primary} />
+                  <Text style={styles.watchedText}>Already watched?</Text>
+                </View>
+                <Switch
+                  trackColor={{ false: theme.secondary, true: theme.primary }}
+                  thumbColor="#fefefe"
+                />
+              </View>
+              <View style={styles.watchedSection}>
+                <View style={{ flexDirection: 'row' }}>
+                  <AntDesign name="close" size={24} color="red" />
+                  <Text style={styles.ignoreText}>Ignore</Text>
+                </View>
+                <Switch
+                  trackColor={{ false: theme.secondary, true: theme.primary }}
+                  thumbColor="#fefefe"
+                />
+              </View>
+              <Text style={styles.overview}>{data.overview}</Text>
+              <TouchableOpacity
+                activeOpacity={0.99}
+                onPress={() =>
+                  navigation.navigate('Trailer', {
+                    id:
+                      response.results.filter(
+                        (obj: any) => obj.type === 'Trailer'
+                      )[0].key ||
+                      response.results[0].key ||
+                      '',
+                  })
+                }
               >
-                <Text style={styles.trailerTitle}>
-                  {response.results?.filter(
-                    (obj: any) => obj.type === 'Trailer'
-                  )[0].name ||
-                    response.results[0].name ||
-                    ''}
-                </Text>
-              </LinearGradient>
-              <Entypo name="controller-play" size={80} color="white" />
-            </ImageBackground>
+                <ImageBackground
+                  style={styles.trailer}
+                  source={{ uri: imageUrl + data.backdrop_path }}
+                >
+                  <LinearGradient
+                    style={styles.gradient}
+                    colors={['rgba(0,0,0,0.8)', 'transparent']}
+                  >
+                    <Text style={styles.trailerTitle}>
+                      {response.results?.filter(
+                        (obj: any) => obj.type === 'Trailer'
+                      )[0].name ||
+                        response.results[0].name ||
+                        ''}
+                    </Text>
+                  </LinearGradient>
+                  <Entypo name="controller-play" size={80} color="white" />
+                </ImageBackground>
+              </TouchableOpacity>
+            </>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -103,6 +130,15 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
+  },
+  hideModalIndicator: {
+    width: 40,
+    height: 7,
+    borderRadius: 5,
+    backgroundColor: theme.secondary,
+    alignSelf: 'center',
+    marginBottom: 10,
+    opacity: 0.5,
   },
   content: {
     margin: 0,
@@ -124,16 +160,16 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   releaseDate: {
-    color: 'rgba(0,0,0,0.35)',
-    fontWeight: 'bold',
+    color: theme.secondary,
+    marginTop: 1,
   },
   overview: {
     marginTop: 10,
   },
   trailer: {
     height: 250,
-    marginTop: 25,
-    marginBottom: 40,
+    marginTop: 15,
+    marginBottom: 30,
     resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
@@ -149,6 +185,24 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     paddingBottom: 20,
+  },
+  watchedSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 13,
+  },
+  watchedText: {
+    fontSize: 16,
+    marginLeft: 5,
+    fontWeight: 'bold',
+    color: theme.primary,
+  },
+  ignoreText: {
+    fontSize: 16,
+    marginLeft: 5,
+    fontWeight: 'bold',
+    color: 'red',
   },
 });
 

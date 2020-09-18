@@ -19,7 +19,7 @@ const Home = () => {
   return (
     <>
       <Image
-        style={[styles.image, { height }]}
+        style={[styles.image, { height: height / 1.3 }]}
         source={{
           uri: `${imageUrl}${response.results[0].poster_path}`,
         }}

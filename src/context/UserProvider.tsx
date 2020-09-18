@@ -17,7 +17,7 @@ interface UserContextType {
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
-const UserContext = createContext<UserContextType>({
+export const UserContext = createContext<UserContextType>({
   user: null,
   setUser: () => {},
 });

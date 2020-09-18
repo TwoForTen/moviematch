@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import StackNavigation from './StackNavigation';
 import Watchlist from '../screens/Watchlist';
 import Profile from '../screens/Profile';
+import theme from '../theme';
 
 const Tab = createBottomTabNavigator();
 
@@ -12,7 +13,7 @@ const BottomNavigation = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: 'rgb(0, 220, 160)', showLabel: false }}
+      tabBarOptions={{ activeTintColor: theme.primary, showLabel: false }}
     >
       <Tab.Screen
         name="Home"
