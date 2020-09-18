@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,27 +9,24 @@ import {
   Button,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import axios from '../../../axiosInstance';
 import { useNavigation } from '@react-navigation/native';
 
+import useFetchData from '../../hooks/useFetchData';
 import ReviewStars from './ReviewStars';
 
 const InfoModal: React.FC<any> = ({ data }) => {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState<boolean>(true);
   const [scrollOffset, setScrollOffset] = useState<number>();
-  const [trailerId, setTrailerId] = useState<string>('');
+
+  const { loading, response, error } = useFetchData({
+    url: `/movie/${data.id}/videos`,
+    method: 'get',
+  });
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     setScrollOffset(e.nativeEvent.contentOffset.y);
   };
-
-  useEffect(() => {
-    data &&
-      axios
-        .get(`/movie/${data.id}/videos`)
-        .then(({ data }) => setTrailerId(data.results[0].key));
-  }, [data]);
 
   return (
     <Modal
@@ -62,7 +59,12 @@ const InfoModal: React.FC<any> = ({ data }) => {
                 title="View Trailer"
                 onPress={() =>
                   navigation.navigate('Trailer', {
-                    id: trailerId,
+                    id:
+                      response.results.filter(
+                        (obj: any) => obj.type === 'Trailer'
+                      )[0].key ||
+                      response.results[0].key ||
+                      '',
                   })
                 }
               />
