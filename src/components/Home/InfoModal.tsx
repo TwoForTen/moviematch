@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import { isEmpty } from 'lodash';
 
 import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
@@ -53,7 +54,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
       swipeDirection={['down']}
       scrollOffset={scrollOffset}
     >
-      <View style={{ flex: 0.5 }}>
+      <View style={{ flex: 0.46 }}>
         <ScrollView
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -89,16 +90,19 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   thumbColor="#fefefe"
                 />
               </View>
-              <Text style={styles.overview}>{data.overview}</Text>
+              <View style={styles.overview}>
+                <Text style={styles.overviewTitle}>Synopsis:</Text>
+                <Text>{data.overview}</Text>
+              </View>
               <TouchableOpacity
                 activeOpacity={0.99}
                 onPress={() =>
                   navigation.navigate('Trailer', {
                     id:
-                      response.results.filter(
+                      response.results?.filter(
                         (obj: any) => obj.type === 'Trailer'
-                      )[0].key ||
-                      response.results[0].key ||
+                      )[0]?.key ||
+                      response.results[0]?.key ||
                       '',
                   })
                 }
@@ -114,8 +118,8 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                     <Text style={styles.trailerTitle}>
                       {response.results?.filter(
                         (obj: any) => obj.type === 'Trailer'
-                      )[0].name ||
-                        response.results[0].name ||
+                      )[0]?.name ||
+                        response.results[0]?.name ||
                         ''}
                     </Text>
                   </LinearGradient>
@@ -152,6 +156,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingTop: 20,
     paddingHorizontal: 20,
+    overflow: 'hidden',
   },
   titleContainer: {
     flexDirection: 'row',
@@ -169,6 +174,10 @@ const styles = StyleSheet.create({
   },
   overview: {
     marginTop: 10,
+  },
+  overviewTitle: {
+    fontWeight: 'bold',
+    lineHeight: 30,
   },
   trailer: {
     height: 250,

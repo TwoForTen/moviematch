@@ -1,14 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, Image, View, Text, ActivityIndicator } from 'react-native';
+import { debounce, isEmpty } from 'lodash';
 import {
-  StyleSheet,
-  useWindowDimensions,
-  ImageBackground,
-  View,
-  Text,
-} from 'react-native';
-import { debounce } from 'lodash';
-import { PanGestureHandler } from 'react-native-gesture-handler';
-import { Entypo } from '@expo/vector-icons';
+  Directions,
+  FlingGestureHandler,
+  PanGestureHandler,
+} from 'react-native-gesture-handler';
+// import { Entypo } from '@expo/vector-icons';
 
 import useFetchData from '../hooks/useFetchData';
 import InfoModal from '../components/Home/InfoModal';
@@ -19,47 +17,71 @@ const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 const Home = () => {
   const [showModal, setShowModal] = useState<boolean>(true);
   const [movie, setMovie] = useState<number>(0);
+  const [movies, setMovies] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
 
-  const { height } = useWindowDimensions();
   const { loading, response, error } = useFetchData({
-    url: '/trending/movie/week',
-    method: 'get',
+    url: `/trending/movie/week?page=${page}`,
   });
 
   const handleSwipe = useCallback(
-    debounce(() => setMovie((prev) => (prev < 19 ? prev + 1 : prev)), 200),
-    [movie]
+    debounce(() => {
+      {
+        if (movie >= movies.length - 3)
+          setPage((prev) => (prev < response.total_pages ? prev + 1 : prev));
+        setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev));
+      }
+    }, 200),
+    [movie, response.results]
   );
 
-  if (loading) return null;
+  useEffect(() => {
+    setMovies((prev) => [...prev, ...response.results]);
+  }, [response.results]);
+
+  if (loading || isEmpty(response.results))
+    return (
+      <View
+        style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}
+      >
+        <ActivityIndicator size={40} />
+      </View>
+    );
 
   return (
     <PanGestureHandler activeOffsetX={[-25, 25]} onGestureEvent={handleSwipe}>
-      <PanGestureHandler
-        activeOffsetY={-100}
-        onGestureEvent={({ nativeEvent }) =>
-          nativeEvent.velocityY < 0 && setShowModal(true)
-        }
-      >
-        <View style={styles.background}>
-          <ImageBackground
-            style={[styles.image]}
-            source={{
-              uri: `${imageUrl}${response.results[movie].poster_path}`,
-            }}
-          />
-          <View style={styles.infoSwipe}>
-            <Entypo name="info-with-circle" size={24} color={theme.secondary} />
-            <Text style={styles.infoText}>Swipe up for info</Text>
-          </View>
+      <FlingGestureHandler direction={Directions.RIGHT | Directions.LEFT}>
+        <PanGestureHandler
+          activeOffsetY={-100}
+          onGestureEvent={({ nativeEvent }) =>
+            nativeEvent.velocityY < 0 && setShowModal(true)
+          }
+        >
+          <View style={styles.background}>
+            <Image
+              style={styles.image}
+              source={{
+                uri: `${imageUrl}${movies[movie].poster_path}`,
+              }}
+            />
 
-          <InfoModal
-            showModal={showModal}
-            setShowModal={setShowModal}
-            data={!loading && response.results[movie]}
-          />
-        </View>
-      </PanGestureHandler>
+            {/* <View style={styles.infoSwipe}>
+              <Entypo
+                name="info-with-circle"
+                size={24}
+                color={theme.secondary}
+              />
+              <Text style={styles.infoText}>Swipe up for info</Text>
+            </View> */}
+
+            <InfoModal
+              showModal={showModal}
+              setShowModal={setShowModal}
+              data={movies[movie]}
+            />
+          </View>
+        </PanGestureHandler>
+      </FlingGestureHandler>
     </PanGestureHandler>
   );
 };
@@ -78,7 +100,7 @@ const styles = StyleSheet.create({
   infoSwipe: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 50,
+    padding: 10,
   },
   infoText: {
     color: theme.secondary,

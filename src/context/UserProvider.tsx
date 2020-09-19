@@ -10,6 +10,7 @@ type User = null | {
   matchedWith: string;
   matchedMovies: string[];
   watchedMovies: string[];
+  ignoredMovies: string[];
 };
 
 interface UserContextType {

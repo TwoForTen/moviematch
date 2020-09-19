@@ -30,7 +30,7 @@ const Profile = () => {
               </View>
               <ProfileButton
                 title="Pair Up"
-                icon={<AntDesign name="user" size={24} color="red" />}
+                icon={<AntDesign name="addusergroup" size={24} color="red" />}
                 endIcon={
                   <Ionicons name="ios-arrow-forward" size={24} color={'red'} />
                 }
@@ -39,7 +39,7 @@ const Profile = () => {
               />
               <ProfileButton
                 title="Watched Movies"
-                number={17}
+                number={user?.watchedMovies.length}
                 icon={<AntDesign name="check" size={24} color="black" />}
                 endIcon={
                   <Ionicons
@@ -52,7 +52,7 @@ const Profile = () => {
               <ProfileButton
                 title="Ignored Movies"
                 icon={<AntDesign name="close" size={24} color="black" />}
-                number={user?.watchedMovies.length}
+                number={user?.ignoredMovies.length}
                 endIcon={
                   <Ionicons
                     name="ios-arrow-forward"
@@ -72,8 +72,7 @@ const Profile = () => {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 0.2,
-    backgroundColor: 'black',
+    flex: 0.15,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     borderRadius: 150,
-    borderColor: theme.background,
+    borderColor: 'white',
     borderWidth: 3,
     zIndex: 1,
   },

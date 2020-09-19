@@ -11,17 +11,17 @@ interface FetchData {
 
 const useFetchData = (config: AxiosRequestConfig): FetchData => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [response, setResponse] = useState<any>();
+  const [response, setResponse] = useState<any>({ results: [] });
   const [error, setError] = useState<string>('');
 
-  const { url, method, params, data } = config;
+  const { url, params, data } = config;
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     axiosInstance({
       url,
-      method,
+      method: 'get',
       params,
       data,
       cancelToken: source.token,
