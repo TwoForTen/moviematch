@@ -52,7 +52,7 @@ const Profile = () => {
               <ProfileButton
                 title="Ignored Movies"
                 icon={<AntDesign name="close" size={24} color="black" />}
-                number={63}
+                number={user?.watchedMovies.length}
                 endIcon={
                   <Ionicons
                     name="ios-arrow-forward"

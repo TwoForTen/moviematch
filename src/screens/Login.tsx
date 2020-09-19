@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,7 +10,11 @@ import * as Google from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
+import { UserContext } from '../context/UserProvider';
+
 const Login = () => {
+  const { setUser } = useContext(UserContext);
+
   const signIn = async () => {
     try {
       const result = await Google.logInAsync({
@@ -31,14 +35,16 @@ const Login = () => {
           photoUrl,
         } = result.user;
         await AsyncStorage.setItem('@token', id || '');
-        await axios.post('http://192.168.1.6:3000/api/user', {
-          _id: id,
-          email,
-          familyName,
-          givenName,
-          name,
-          photoUrl,
-        });
+        await axios
+          .post('http://192.168.1.6:3000/api/user', {
+            _id: id,
+            email,
+            familyName,
+            givenName,
+            name,
+            photoUrl,
+          })
+          .then(({ data }) => setUser(data));
       } else {
         console.log('cancelled');
       }

@@ -37,7 +37,9 @@ const ProfileButton: React.FC<Props> = ({
         </View>
       </View>
       <View style={styles.iconContainers}>
-        {number ? <Text style={styles.number}>{number}</Text> : null}
+        {number !== undefined ? (
+          <Text style={styles.number}>{number}</Text>
+        ) : null}
         {endIcon}
       </View>
     </TouchableOpacity>

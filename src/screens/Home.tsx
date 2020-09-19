@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Image, useWindowDimensions } from 'react-native';
-import axios from '../../axiosInstance';
 
 import useFetchData from '../hooks/useFetchData';
 import InfoModal from '../components/Home/InfoModal';
