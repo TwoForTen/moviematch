@@ -1,16 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { StyleSheet, Image, View, Text, ActivityIndicator } from 'react-native';
 import { debounce, isEmpty } from 'lodash';
-import {
-  Directions,
-  FlingGestureHandler,
-  PanGestureHandler,
-} from 'react-native-gesture-handler';
-// import { Entypo } from '@expo/vector-icons';
+import { PanGestureHandler } from 'react-native-gesture-handler';
 
 import useFetchData from '../hooks/useFetchData';
 import InfoModal from '../components/Home/InfoModal';
 import theme from '../theme';
+import { UserContext } from '../context/UserProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
@@ -19,9 +15,10 @@ const Home = () => {
   const [movie, setMovie] = useState<number>(0);
   const [movies, setMovies] = useState<any[]>([]);
   const [page, setPage] = useState(1);
+  const { user } = useContext(UserContext);
 
-  const { loading, response, error } = useFetchData({
-    url: `/trending/movie/week?page=${page}`,
+  const { loading, response } = useFetchData({
+    url: `/trending/movie/day?page=${page}`,
   });
 
   const handleSwipe = useCallback(
@@ -32,11 +29,16 @@ const Home = () => {
         setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev));
       }
     }, 200),
-    [movie, response.results]
+    [movie, movies, response.total_pages]
   );
 
   useEffect(() => {
-    setMovies((prev) => [...prev, ...response.results]);
+    setMovies((prev) => [
+      ...prev,
+      ...response.results.filter(
+        (item: any) => !user?.ignoredMovies.includes(item.id)
+      ),
+    ]);
   }, [response.results]);
 
   if (loading || isEmpty(response.results))
@@ -50,38 +52,27 @@ const Home = () => {
 
   return (
     <PanGestureHandler activeOffsetX={[-25, 25]} onGestureEvent={handleSwipe}>
-      <FlingGestureHandler direction={Directions.RIGHT | Directions.LEFT}>
-        <PanGestureHandler
-          activeOffsetY={-100}
-          onGestureEvent={({ nativeEvent }) =>
-            nativeEvent.velocityY < 0 && setShowModal(true)
-          }
-        >
-          <View style={styles.background}>
-            <Image
-              style={styles.image}
-              source={{
-                uri: `${imageUrl}${movies[movie].poster_path}`,
-              }}
-            />
+      <PanGestureHandler
+        activeOffsetY={-100}
+        onGestureEvent={({ nativeEvent }) =>
+          nativeEvent.velocityY < 0 && setShowModal(true)
+        }
+      >
+        <View style={styles.background}>
+          <Image
+            style={styles.image}
+            source={{
+              uri: `${imageUrl}${movies[movie].poster_path}`,
+            }}
+          />
 
-            {/* <View style={styles.infoSwipe}>
-              <Entypo
-                name="info-with-circle"
-                size={24}
-                color={theme.secondary}
-              />
-              <Text style={styles.infoText}>Swipe up for info</Text>
-            </View> */}
-
-            <InfoModal
-              showModal={showModal}
-              setShowModal={setShowModal}
-              data={movies[movie]}
-            />
-          </View>
-        </PanGestureHandler>
-      </FlingGestureHandler>
+          <InfoModal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            data={movies[movie]}
+          />
+        </View>
+      </PanGestureHandler>
     </PanGestureHandler>
   );
 };

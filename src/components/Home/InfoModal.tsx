@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
   ScrollView,
   ImageBackground,
   TouchableOpacity,
@@ -14,11 +12,12 @@ import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, AntDesign } from '@expo/vector-icons';
-import { isEmpty } from 'lodash';
+import axios from 'axios';
 
 import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
 import ReviewStars from './ReviewStars';
+import { UserContext } from '../../context/UserProvider';
 
 interface Props {
   data: any;
@@ -26,20 +25,66 @@ interface Props {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface SwitchValues {
+  watched: boolean | undefined;
+  ignored: boolean | undefined;
+}
+
+type SwitchName = keyof SwitchValues;
+
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
+const url: string = 'http://192.168.1.6:3000/api/user/movies';
 
 const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   const navigation = useNavigation();
-  const [scrollOffset, setScrollOffset] = useState<number>();
+  const { user, setUser } = useContext(UserContext);
 
-  const { loading, response, error } = useFetchData({
+  const switchValuesState: SwitchValues = {
+    watched: user?.watchedMovies.includes(data.id),
+    ignored: user?.ignoredMovies.includes(data.id),
+  };
+
+  const [switchValues, setSwitchValues] = useState<SwitchValues>(
+    switchValuesState
+  );
+
+  const { loading, response } = useFetchData({
     url: `/movie/${data.id}/videos`,
     method: 'get',
   });
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setScrollOffset(e.nativeEvent.contentOffset.y);
+  const onSwitchChange = async (
+    switchValue: boolean,
+    switchName: SwitchName
+  ): Promise<void> => {
+    let result = null;
+    try {
+      if (switchValue)
+        result = await axios.post(url, {
+          _id: user?._id,
+          [switchName + 'Movies']: data.id,
+        });
+      else if (!switchValue)
+        result = await axios.post(url + '/delete', {
+          _id: user?._id,
+          [switchName + 'Movies']: data.id,
+        });
+      setUser(result?.data);
+    } catch (err) {
+      console.log(err.response);
+    }
+
+    setSwitchValues((prev) => {
+      return {
+        ...prev,
+        [switchName]: !switchValues[switchName],
+      };
+    });
   };
+
+  useEffect(() => {
+    setSwitchValues(switchValuesState);
+  }, [data.id]);
 
   if (loading || !data) return null;
 
@@ -52,14 +97,9 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
       coverScreen={false}
       propagateSwipe
       swipeDirection={['down']}
-      scrollOffset={scrollOffset}
     >
       <View style={{ flex: 0.46 }}>
-        <ScrollView
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          style={styles.content}
-        >
+        <ScrollView scrollEventThrottle={16} style={styles.content}>
           <View style={styles.hideModalIndicator} />
           <TouchableOpacity activeOpacity={1}>
             <>
@@ -77,7 +117,10 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                 </View>
                 <Switch
                   trackColor={{ false: theme.secondary, true: theme.primary }}
+                  ios_backgroundColor={theme.secondary}
                   thumbColor="#fefefe"
+                  value={switchValues['watched']}
+                  onValueChange={(value) => onSwitchChange(value, 'watched')}
                 />
               </View>
               <View style={styles.watchedSection}>
@@ -87,7 +130,10 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                 </View>
                 <Switch
                   trackColor={{ false: theme.secondary, true: theme.primary }}
+                  ios_backgroundColor={theme.secondary}
                   thumbColor="#fefefe"
+                  value={switchValues['ignored']}
+                  onValueChange={(value) => onSwitchChange(value, 'ignored')}
                 />
               </View>
               <View style={styles.overview}>

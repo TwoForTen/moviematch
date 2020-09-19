@@ -16,7 +16,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const PickGenre: React.FC = () => {
   return (
     <TouchableOpacity style={{ padding: 20 }}>
-      <AntDesign name="tago" size={24} color="black" />
+      <AntDesign name="setting" size={24} color="black" />
     </TouchableOpacity>
   );
 };
