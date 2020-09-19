@@ -8,7 +8,6 @@ import {
   ScrollView,
   ImageBackground,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Switch,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -20,11 +19,16 @@ import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
 import ReviewStars from './ReviewStars';
 
+interface Props {
+  data: any;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
 
-const InfoModal: React.FC<any> = ({ data }) => {
+const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   const navigation = useNavigation();
-  const [showModal, setShowModal] = useState<boolean>(true);
   const [scrollOffset, setScrollOffset] = useState<number>();
 
   const { loading, response, error } = useFetchData({
