@@ -51,7 +51,7 @@ const Home = () => {
       <View
         style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}
       >
-        <ActivityIndicator size={40} />
+        <ActivityIndicator size={40} color={theme.primary} />
       </View>
     );
 

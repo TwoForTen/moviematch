@@ -16,7 +16,7 @@ const Splash = () => {
       const storedToken = await AsyncStorage.getItem('@token');
       if (!!storedToken) {
         axios
-          .get(`http://192.168.1.6:3000/api/userid=${storedToken}`)
+          .get(`http://192.168.1.6:3000/api/user?id=${storedToken}`)
           .then(({ data }) => {
             setUser(data);
           })
@@ -34,7 +34,7 @@ const Splash = () => {
       <AppLoading startAsync={userToken} onFinish={() => setAppReady(true)} />
     );
 
-  return <>{!user ? <Login /> : <Routes />}</>;
+  return <>{!!!user._id ? <Login /> : <Routes />}</>;
 };
 
 export default Splash;

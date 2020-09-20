@@ -36,7 +36,12 @@ const Profile = () => {
               }
               warning
               helperText="Find someone to match movies with"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate('SearchUsers', {
+                  title: 'Search For Users',
+                  _id: user._id,
+                });
+              }}
             />
             <ProfileButton
               title="Watched Movies"
@@ -48,6 +53,7 @@ const Profile = () => {
               onPress={() =>
                 navigation.navigate('MovieList', {
                   movies: user.watchedMovies,
+                  title: 'Watched Movies',
                 })
               }
             />
@@ -61,6 +67,7 @@ const Profile = () => {
               onPress={() =>
                 navigation.navigate('MovieList', {
                   movies: user.ignoredMovies,
+                  title: 'Ignored Movies',
                 })
               }
             />
