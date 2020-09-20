@@ -16,7 +16,7 @@ import axios from 'axios';
 
 import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
-import ReviewStars from './ReviewStars';
+import ReviewStars from '../ReviewStars';
 import { UserContext } from '../../context/UserProvider';
 
 interface Props {
@@ -86,7 +86,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
     setSwitchValues(switchValuesState);
   }, [data.id]);
 
-  if (loading || !data) return null;
+  if (!data) return null;
 
   return (
     <Modal

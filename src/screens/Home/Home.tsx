@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { StyleSheet, Image, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, Image, View, ActivityIndicator } from 'react-native';
 import { debounce, isEmpty } from 'lodash';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 
-import useFetchData from '../hooks/useFetchData';
-import InfoModal from '../components/Home/InfoModal';
-import theme from '../theme';
-import { UserContext } from '../context/UserProvider';
+import useFetchData from '../../hooks/useFetchData';
+import InfoModal from '../../components/Home/InfoModal';
+import theme from '../../theme';
+import { UserContext } from '../../context/UserProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
@@ -41,7 +41,12 @@ const Home = () => {
     ]);
   }, [response.results]);
 
-  if (loading || isEmpty(response.results))
+  useEffect(() => {
+    if (isEmpty(movies))
+      setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
+  }, [movies]);
+
+  if (loading || isEmpty(movies))
     return (
       <View
         style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}
@@ -62,7 +67,7 @@ const Home = () => {
           <Image
             style={styles.image}
             source={{
-              uri: `${imageUrl}${movies[movie].poster_path}`,
+              uri: `${imageUrl}${movies[movie]?.poster_path}`,
             }}
           />
 

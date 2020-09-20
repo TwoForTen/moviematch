@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AntDesign } from '@expo/vector-icons';
 
-import Home from '../screens/Home';
-import Trailer from '../screens/Trailer';
+import Home from '../screens/Home/Home';
+import Trailer from '../screens/Home/Trailer';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -21,7 +21,7 @@ const PickGenre: React.FC = () => {
   );
 };
 
-const StackNavigation = () => {
+const HomeNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -37,4 +37,4 @@ const StackNavigation = () => {
   );
 };
 
-export default StackNavigation;
+export default HomeNavigation;

@@ -9,6 +9,7 @@ interface Props {
   helperText?: string;
   warning?: boolean;
   number?: number;
+  onPress: () => void;
 }
 
 const ProfileButton: React.FC<Props> = ({
@@ -18,9 +19,10 @@ const ProfileButton: React.FC<Props> = ({
   warning,
   number,
   endIcon,
+  onPress,
 }) => {
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
       <View style={styles.iconContainers}>
         {icon}
         <View style={styles.textContainer}>

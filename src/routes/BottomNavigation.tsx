@@ -2,9 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign } from '@expo/vector-icons';
 
-import StackNavigation from './StackNavigation';
+import HomeNavigation from './HomeNavigation';
 import Watchlist from '../screens/Watchlist';
-import Profile from '../screens/Profile';
+import ProfileNavigation from './ProfileNavigation';
 import theme from '../theme';
 
 const Tab = createBottomTabNavigator();
@@ -17,7 +17,7 @@ const BottomNavigation = () => {
     >
       <Tab.Screen
         name="Home"
-        component={StackNavigation}
+        component={HomeNavigation}
         options={{
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="home" size={size} color={color} />
@@ -35,7 +35,7 @@ const BottomNavigation = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileNavigation}
         options={{
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="user" size={size} color={color} />

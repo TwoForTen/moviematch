@@ -1,14 +1,15 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image, Button, StatusBar } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-import theme from '../theme';
-import ProfileButton from '../components/Profile/ProfileButton';
-import { UserContext } from '../context/UserProvider';
+import theme from '../../theme';
+import ProfileButton from '../../components/Profile/ProfileButton';
+import { UserContext } from '../../context/UserProvider';
 
 const Profile = () => {
   const { user } = useContext(UserContext);
-
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -35,6 +36,7 @@ const Profile = () => {
               }
               warning
               helperText="Find someone to match movies with"
+              onPress={() => {}}
             />
             <ProfileButton
               title="Watched Movies"
@@ -43,6 +45,11 @@ const Profile = () => {
               endIcon={
                 <Ionicons name="ios-arrow-forward" size={24} color={'black'} />
               }
+              onPress={() =>
+                navigation.navigate('MovieList', {
+                  movies: user?.watchedMovies,
+                })
+              }
             />
             <ProfileButton
               title="Ignored Movies"
@@ -50,6 +57,11 @@ const Profile = () => {
               number={user?.ignoredMovies.length}
               endIcon={
                 <Ionicons name="ios-arrow-forward" size={24} color={'black'} />
+              }
+              onPress={() =>
+                navigation.navigate('MovieList', {
+                  movies: user?.ignoredMovies,
+                })
               }
             />
           </View>
