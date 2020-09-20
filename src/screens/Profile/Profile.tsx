@@ -20,13 +20,13 @@ const Profile = () => {
     >
       <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
         <View style={styles.header}>
-          <Image style={styles.profileImg} source={{ uri: user?.photoUrl }} />
+          <Image style={styles.profileImg} source={{ uri: user.photoUrl }} />
         </View>
         <View style={styles.profileCardContainer}>
           <View style={styles.profileCard}>
             <View style={styles.info}>
-              <Text style={styles.name}>{user?.name}</Text>
-              <Text style={styles.email}>{user?.email}</Text>
+              <Text style={styles.name}>{user.name}</Text>
+              <Text style={styles.email}>{user.email}</Text>
             </View>
             <ProfileButton
               title="Pair Up"
@@ -40,27 +40,27 @@ const Profile = () => {
             />
             <ProfileButton
               title="Watched Movies"
-              number={user?.watchedMovies.length}
+              number={user.watchedMovies.length}
               icon={<AntDesign name="check" size={24} color="black" />}
               endIcon={
                 <Ionicons name="ios-arrow-forward" size={24} color={'black'} />
               }
               onPress={() =>
                 navigation.navigate('MovieList', {
-                  movies: user?.watchedMovies,
+                  movies: user.watchedMovies,
                 })
               }
             />
             <ProfileButton
               title="Ignored Movies"
               icon={<AntDesign name="close" size={24} color="black" />}
-              number={user?.ignoredMovies.length}
+              number={user.ignoredMovies.length}
               endIcon={
                 <Ionicons name="ios-arrow-forward" size={24} color={'black'} />
               }
               onPress={() =>
                 navigation.navigate('MovieList', {
-                  movies: user?.ignoredMovies,
+                  movies: user.ignoredMovies,
                 })
               }
             />

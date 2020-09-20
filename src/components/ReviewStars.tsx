@@ -7,10 +7,15 @@ interface Props {
   rating: number;
 }
 
+const iconSize: number = 18;
+const color: string = 'orange';
+
 const returnFullStars = (amount: number) => {
   const fullStars: JSX.Element[] = [];
   for (let i = 0; i < amount; i++) {
-    fullStars.push(<FontAwesome name="star" size={24} color="gold" key={i} />);
+    fullStars.push(
+      <FontAwesome name="star" size={iconSize} color={color} key={i} />
+    );
   }
   return fullStars;
 };
@@ -19,7 +24,7 @@ const returnEmptyStars = (amount: number) => {
   const emptyStars: JSX.Element[] = [];
   for (let i = 0; i < amount; i++) {
     emptyStars.push(
-      <FontAwesome name="star-o" size={24} color="gold" key={i} />
+      <FontAwesome name="star-o" size={iconSize} color={color} key={i} />
     );
   }
   return emptyStars;
@@ -30,12 +35,10 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
 
   const renderedRatings: () => JSX.Element = () => {
     switch (review) {
-      case 0:
-        return <>{returnEmptyStars(5)}</>;
       case 0.5:
         return (
           <>
-            <FontAwesome name="star-half-full" size={24} color="gold" />
+            <FontAwesome name="star-half-full" size={iconSize} color={color} />
             {returnEmptyStars(4)}
           </>
         );
@@ -50,7 +53,7 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
         return (
           <>
             {returnFullStars(1)}
-            <FontAwesome name="star-half-full" size={24} color="gold" />
+            <FontAwesome name="star-half-full" size={iconSize} color={color} />
             {returnEmptyStars(3)}
           </>
         );
@@ -65,7 +68,7 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
         return (
           <>
             {returnFullStars(2)}
-            <FontAwesome name="star-half-full" size={24} color="gold" />
+            <FontAwesome name="star-half-full" size={iconSize} color={color} />
             {returnEmptyStars(2)}
           </>
         );
@@ -80,7 +83,7 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
         return (
           <>
             {returnFullStars(3)}
-            <FontAwesome name="star-half-full" size={24} color="gold" />
+            <FontAwesome name="star-half-full" size={iconSize} color={color} />
             {returnEmptyStars(1)}
           </>
         );
@@ -95,11 +98,12 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
         return (
           <>
             {returnFullStars(4)}
-            <FontAwesome name="star-half-full" size={24} color="gold" />
+            <FontAwesome name="star-half-full" size={iconSize} color={color} />
           </>
         );
       case 5:
         return <>{returnFullStars(5)}</>;
+      case 0:
       default:
         return (
           <Text style={{ color: theme.secondary, fontStyle: 'italic' }}>

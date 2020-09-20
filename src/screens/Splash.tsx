@@ -16,7 +16,7 @@ const Splash = () => {
       const storedToken = await AsyncStorage.getItem('@token');
       if (!!storedToken) {
         axios
-          .get(`http://192.168.1.6:3000/api/user?id=${storedToken}`)
+          .get(`http://192.168.1.6:3000/api/userid=${storedToken}`)
           .then(({ data }) => {
             setUser(data);
           })

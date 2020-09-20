@@ -5,15 +5,18 @@ import io from 'socket.io-client';
 
 import Splash from './src/screens/Splash';
 import UserProvider from './src/context/UserProvider';
+import StatusModalProvider from './src/context/StatusModalProvider';
 import theme from './src/theme';
 
 export default function App() {
   return (
     <NavigationContainer>
       <UserProvider>
-        <View style={styles.container}>
-          <Splash />
-        </View>
+        <StatusModalProvider>
+          <View style={styles.container}>
+            <Splash />
+          </View>
+        </StatusModalProvider>
       </UserProvider>
     </NavigationContainer>
   );

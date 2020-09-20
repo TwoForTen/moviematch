@@ -12,10 +12,13 @@ import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, AntDesign } from '@expo/vector-icons';
-import axios from 'axios';
 
 import theme from '../../theme';
 import useFetchData from '../../hooks/useFetchData';
+import useChangeMovieStatus, {
+  SwitchName,
+  SwitchValues,
+} from '../../hooks/useChangeMovieStatus';
 import ReviewStars from '../ReviewStars';
 import { UserContext } from '../../context/UserProvider';
 
@@ -25,23 +28,16 @@ interface Props {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface SwitchValues {
-  watched: boolean | undefined;
-  ignored: boolean | undefined;
-}
-
-type SwitchName = keyof SwitchValues;
-
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
-const url: string = 'http://192.168.1.6:3000/api/user/movies';
 
 const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   const navigation = useNavigation();
-  const { user, setUser } = useContext(UserContext);
+  const changeMovieStatus = useChangeMovieStatus();
+  const { user } = useContext(UserContext);
 
   const switchValuesState: SwitchValues = {
-    watched: user?.watchedMovies.includes(data.id),
-    ignored: user?.ignoredMovies.includes(data.id),
+    watchedMovies: user.watchedMovies.includes(data.id),
+    ignoredMovies: user.ignoredMovies.includes(data.id),
   };
 
   const [switchValues, setSwitchValues] = useState<SwitchValues>(
@@ -57,23 +53,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
     switchValue: boolean,
     switchName: SwitchName
   ): Promise<void> => {
-    let result = null;
-    try {
-      if (switchValue)
-        result = await axios.post(url, {
-          _id: user?._id,
-          [switchName + 'Movies']: data.id,
-        });
-      else if (!switchValue)
-        result = await axios.post(url + '/delete', {
-          _id: user?._id,
-          [switchName + 'Movies']: data.id,
-        });
-      setUser(result?.data);
-    } catch (err) {
-      console.log(err.response);
-    }
-
+    changeMovieStatus(switchValue, switchName, data.id);
     setSwitchValues((prev) => {
       return {
         ...prev,
@@ -119,8 +99,10 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   trackColor={{ false: theme.secondary, true: theme.primary }}
                   ios_backgroundColor={theme.secondary}
                   thumbColor="#fefefe"
-                  value={switchValues['watched']}
-                  onValueChange={(value) => onSwitchChange(value, 'watched')}
+                  value={switchValues['watchedMovies']}
+                  onValueChange={(value) =>
+                    onSwitchChange(value, 'watchedMovies')
+                  }
                 />
               </View>
               <View style={styles.watchedSection}>
@@ -132,8 +114,10 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   trackColor={{ false: theme.secondary, true: theme.primary }}
                   ios_backgroundColor={theme.secondary}
                   thumbColor="#fefefe"
-                  value={switchValues['ignored']}
-                  onValueChange={(value) => onSwitchChange(value, 'ignored')}
+                  value={switchValues['ignoredMovies']}
+                  onValueChange={(value) =>
+                    onSwitchChange(value, 'ignoredMovies')
+                  }
                 />
               </View>
               <View style={styles.overview}>

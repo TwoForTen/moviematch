@@ -26,7 +26,7 @@ const Home = () => {
       {
         if (movie >= movies.length - 3)
           setPage((prev) => (prev < response.total_pages ? prev + 1 : prev));
-        setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev));
+        setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev + 2));
       }
     }, 200),
     [movie, movies, response.total_pages]
@@ -36,7 +36,7 @@ const Home = () => {
     setMovies((prev) => [
       ...prev,
       ...response.results.filter(
-        (item: any) => !user?.ignoredMovies.includes(item.id)
+        (item: any) => !user.ignoredMovies.includes(item.id)
       ),
     ]);
   }, [response.results]);
@@ -46,7 +46,7 @@ const Home = () => {
       setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
   }, [movies]);
 
-  if (loading || isEmpty(movies))
+  if (loading || isEmpty(movies) || !movies[movie])
     return (
       <View
         style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}
