@@ -7,7 +7,9 @@ interface Props {
   endIcon: JSX.Element;
   title: string;
   helperText?: string;
+  pairingId?: string;
   warning?: boolean;
+  success?: boolean;
   number?: number;
   onPress: () => void;
 }
@@ -16,7 +18,9 @@ const ProfileButton: React.FC<Props> = ({
   icon,
   title,
   helperText,
+  pairingId,
   warning,
+  success,
   number,
   endIcon,
   onPress,
@@ -26,15 +30,47 @@ const ProfileButton: React.FC<Props> = ({
       <View style={styles.iconContainers}>
         {icon}
         <View style={styles.textContainer}>
-          <Text style={[styles.text, { color: warning ? 'red' : 'black' }]}>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: warning
+                  ? theme.danger
+                  : success
+                  ? theme.primary
+                  : theme.black,
+              },
+            ]}
+          >
             {title}
           </Text>
           {!helperText ? null : (
-            <Text
-              style={[styles.helperText, { color: warning ? 'red' : 'black' }]}
-            >
-              {helperText}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+              {!!pairingId && (
+                <Text
+                  style={[
+                    styles.helperText,
+                    { fontWeight: 'bold', color: theme.danger },
+                  ]}
+                >
+                  {pairingId}
+                </Text>
+              )}
+              <Text
+                style={[
+                  styles.helperText,
+                  {
+                    color: warning
+                      ? theme.danger
+                      : success
+                      ? theme.primary
+                      : theme.black,
+                  },
+                ]}
+              >
+                {helperText}
+              </Text>
+            </View>
           )}
         </View>
       </View>

@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AntDesign } from '@expo/vector-icons';
 
+import theme from '../theme';
 import Home from '../screens/Home/Home';
 import Trailer from '../screens/Home/Trailer';
 
@@ -16,7 +17,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const PickGenre: React.FC = () => {
   return (
     <TouchableOpacity style={{ padding: 20 }}>
-      <AntDesign name="setting" size={24} color="black" />
+      <AntDesign name="setting" size={24} color={theme.black} />
     </TouchableOpacity>
   );
 };

@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 
-type User = {
+export type User = {
   _id: string;
   email: string;
   familyName: string;
@@ -8,7 +8,9 @@ type User = {
   name: string;
   photoUrl: string;
   matchedWith: string | null;
-  matchedMovies: string[] | null;
+  sentPairRequest: string | null;
+  receivedPairRequests: string[];
+  matchedMovies: string[];
   watchedMovies: string[];
   ignoredMovies: string[];
 };
@@ -18,35 +20,28 @@ interface UserContextType {
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
+export const initialUserState = {
+  _id: '',
+  email: '',
+  familyName: '',
+  givenName: '',
+  name: '',
+  photoUrl: '',
+  matchedWith: null,
+  sentPairRequest: null,
+  receivedPairRequests: [],
+  matchedMovies: [],
+  watchedMovies: [],
+  ignoredMovies: [],
+};
+
 export const UserContext = createContext<UserContextType>({
-  user: {
-    _id: '',
-    email: '',
-    familyName: '',
-    givenName: '',
-    name: '',
-    photoUrl: '',
-    matchedWith: null,
-    matchedMovies: null,
-    watchedMovies: [],
-    ignoredMovies: [],
-  },
+  user: initialUserState,
   setUser: () => {},
 });
 
 const UserProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User>({
-    _id: '',
-    email: '',
-    familyName: '',
-    givenName: '',
-    name: '',
-    photoUrl: '',
-    matchedWith: null,
-    matchedMovies: null,
-    watchedMovies: [],
-    ignoredMovies: [],
-  });
+  const [user, setUser] = useState<User>(initialUserState);
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

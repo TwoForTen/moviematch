@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import {
   View,
   TextInput,
@@ -12,31 +12,26 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import { debounce } from 'lodash';
 import axios from 'axios';
-import { RouteProp } from '@react-navigation/native';
-import { ProfileStackParamList } from '../../routes/ProfileNavigation';
 
 import theme from '../../theme';
+import { SocketContext } from '../../context/SocketProvider';
+import { UserContext, User } from '../../context/UserProvider';
 
-type TrailerScreenRouteProp = RouteProp<ProfileStackParamList, 'SearchUsers'>;
-
-interface Props {
-  route: TrailerScreenRouteProp;
-}
-
-const SearchUsers: React.FC<Props> = ({ route }) => {
+const SearchUsers: React.FC = () => {
   const [inputFocused, setInputFocused] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    params: { _id },
-  } = route;
+    user: { _id, matchedWith, sentPairRequest },
+  } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
 
   const searchUsers = useCallback(
     debounce((text: string) => {
       setLoading(true);
       if (text.length > 0)
         axios
-          .get(`http://192.168.1.6:3000/api/users?q=${text}&_id=${_id}`)
+          .get(`http://192.168.1.6:3000/api/users/pair?q=${text}&_id=${_id}`)
           .then(({ data }) => {
             setUsers(data);
             setLoading(false);
@@ -53,26 +48,31 @@ const SearchUsers: React.FC<Props> = ({ route }) => {
     []
   );
 
+  const sendPairRequest = useCallback((userId: string) => {
+    socket.emit('pairRequest', { _id, userId });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View
         style={[
           styles.inputContainer,
           {
-            borderBottomColor: !inputFocused ? theme.secondary : 'black',
+            borderBottomColor: !inputFocused ? theme.secondary : theme.black,
           },
         ]}
       >
         <AntDesign
           name="search1"
           size={24}
-          color={!inputFocused ? theme.secondary : 'black'}
+          color={!inputFocused ? theme.secondary : theme.black}
         />
         <TextInput
           style={styles.input}
-          placeholder="Search by Name or Email..."
+          placeholder="Search by Pairing ID"
           onFocus={() => setInputFocused(true)}
           onBlur={() => setInputFocused(false)}
+          autoCapitalize="none"
           autoFocus
           onChangeText={(text) => {
             searchUsers(text);
@@ -81,16 +81,35 @@ const SearchUsers: React.FC<Props> = ({ route }) => {
         {loading && <ActivityIndicator color={theme.primary} />}
       </View>
       <ScrollView>
-        {users.map((user) => (
+        {users.map((user: User) => (
           <View style={styles.userContainer} key={user._id}>
             <Image style={styles.userImage} source={{ uri: user.photoUrl }} />
             <View style={styles.userInfo}>
               <Text style={styles.name}>{user.name}</Text>
               <Text style={styles.email}>{user.email}</Text>
             </View>
-            <TouchableOpacity style={styles.addButton}>
-              <AntDesign name="adduser" size={24} color="black" />
-            </TouchableOpacity>
+            {!matchedWith && !sentPairRequest && !user.matchedWith ? (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={sendPairRequest.bind(this, user._id)}
+              >
+                <AntDesign name="adduser" size={24} color={theme.black} />
+              </TouchableOpacity>
+            ) : (
+              sentPairRequest === user._id && (
+                <TouchableOpacity
+                  disabled
+                  style={styles.addButton}
+                  onPress={sendPairRequest.bind(this, user._id)}
+                >
+                  <AntDesign
+                    name="deleteuser"
+                    size={24}
+                    color={theme.primary}
+                  />
+                </TouchableOpacity>
+              )
+            )}
           </View>
         ))}
       </ScrollView>

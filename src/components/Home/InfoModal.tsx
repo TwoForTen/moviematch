@@ -107,7 +107,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
               </View>
               <View style={styles.watchedSection}>
                 <View style={{ flexDirection: 'row' }}>
-                  <AntDesign name="close" size={24} color="red" />
+                  <AntDesign name="close" size={24} color={theme.danger} />
                   <Text style={styles.ignoreText}>Ignore</Text>
                 </View>
                 <Switch
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 5,
     fontWeight: 'bold',
-    color: 'red',
+    color: theme.danger,
   },
 });
 

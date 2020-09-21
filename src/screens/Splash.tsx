@@ -5,18 +5,28 @@ import axios from 'axios';
 
 import Login from './Login';
 import Routes from '../routes';
-import { UserContext } from '../context/UserProvider';
+import { UserContext, User } from '../context/UserProvider';
+import { SocketContext } from '../context/SocketProvider';
 
 const Splash = () => {
   const [appReady, setAppReady] = useState<boolean>(false);
   const { user, setUser } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    socket.emit('clientJoined', user._id);
+    socket.on('userStateUpdate', (user: User) => {
+      console.log(user);
+      setUser(user);
+    });
+  }, []);
 
   const userToken = async () => {
     try {
       const storedToken = await AsyncStorage.getItem('@token');
       if (!!storedToken) {
         axios
-          .get(`http://192.168.1.6:3000/api/user?id=${storedToken}`)
+          .get(`http://192.168.1.6:3000/api/user?_id=${storedToken}`)
           .then(({ data }) => {
             setUser(data);
           })

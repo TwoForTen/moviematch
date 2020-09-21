@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import ReviewStars from '../ReviewStars';
 
 import useFetchData from '../../hooks/useFetchData';
@@ -42,7 +42,7 @@ const Movie: React.FC<Props> = ({ id }) => {
               .join(', ')}
           </Text>
         </View>
-        <Actions id={id} />
+        {!!id && <Actions id={id} />}
       </View>
     </View>
   );
