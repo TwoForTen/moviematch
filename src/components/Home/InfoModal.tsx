@@ -77,6 +77,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
       coverScreen={false}
       propagateSwipe
       swipeDirection={['down']}
+      swipeThreshold={150}
     >
       <View style={{ flex: 0.46 }}>
         <ScrollView scrollEventThrottle={16} style={styles.content}>

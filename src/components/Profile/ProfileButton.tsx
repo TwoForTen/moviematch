@@ -30,20 +30,31 @@ const ProfileButton: React.FC<Props> = ({
       <View style={styles.iconContainers}>
         {icon}
         <View style={styles.textContainer}>
-          <Text
-            style={[
-              styles.text,
-              {
-                color: warning
-                  ? theme.danger
-                  : success
-                  ? theme.primary
-                  : theme.black,
-              },
-            ]}
-          >
-            {title}
-          </Text>
+          {!!title ? (
+            <Text
+              style={[
+                styles.text,
+                {
+                  color: warning
+                    ? theme.danger
+                    : success
+                    ? theme.primary
+                    : theme.black,
+                },
+              ]}
+            >
+              {title}
+            </Text>
+          ) : (
+            <View
+              style={{
+                height: 8,
+                width: 60,
+                backgroundColor: theme.secondary,
+                borderRadius: 150,
+              }}
+            />
+          )}
           {!helperText ? null : (
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
               {!!pairingId && (

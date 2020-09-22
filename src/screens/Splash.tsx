@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AppLoading } from 'expo';
 import axios from 'axios';
@@ -7,34 +8,51 @@ import Login from './Login';
 import Routes from '../routes';
 import { UserContext, User } from '../context/UserProvider';
 import { SocketContext } from '../context/SocketProvider';
+import theme from '../theme';
 
 const Splash = () => {
   const [appReady, setAppReady] = useState<boolean>(false);
+  const [token, setToken] = useState<string>('');
   const { user, setUser } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    socket.emit('clientJoined', user._id);
-    socket.on('userStateUpdate', (user: User) => {
-      console.log(user);
-      setUser(user);
-    });
-  }, []);
+    if (!!user._id) {
+      socket.emit('clientJoined', user._id);
+      socket.on('userStateUpdate', (user: User) => {
+        setUser(user);
+      });
+
+      if (!!user.matchedWith)
+        socket.emit('joinMatch', user.matchedWith.matchId);
+    }
+  }, [user._id, user.matchedWith]);
 
   const userToken = async () => {
     try {
       const storedToken = await AsyncStorage.getItem('@token');
       if (!!storedToken) {
+        setToken(storedToken);
         axios
           .get(`http://192.168.1.6:3000/api/user?_id=${storedToken}`)
           .then(({ data }) => {
+            if (!data) {
+              setToken('');
+              return;
+            }
             setUser(data);
           })
-          .catch(() => {
-            throw new Error('Something went wrong');
+          .catch(async () => {
+            await AsyncStorage.removeItem('@token');
+            setToken('');
+            throw new Error('something went wrong');
           });
-      } else throw new Error('No token stored');
+      } else {
+        setToken('');
+        throw new Error('No token stored');
+      }
     } catch (err) {
+      setToken('');
       console.log(err.message);
     }
   };
@@ -44,7 +62,21 @@ const Splash = () => {
       <AppLoading startAsync={userToken} onFinish={() => setAppReady(true)} />
     );
 
-  return <>{!!!user._id ? <Login /> : <Routes />}</>;
+  return (
+    <>
+      {!!!user._id && !!!token ? (
+        <Login />
+      ) : !!!user._id && !!token ? (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ActivityIndicator size={40} color={theme.primary} />
+        </View>
+      ) : (
+        <Routes />
+      )}
+    </>
+  );
 };
 
 export default Splash;

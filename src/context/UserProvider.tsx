@@ -7,7 +7,10 @@ export type User = {
   givenName: string;
   name: string;
   photoUrl: string;
-  matchedWith: string | null;
+  matchedWith: null | {
+    matchId: string;
+    match: string;
+  };
   sentPairRequest: string | null;
   receivedPairRequests: string[];
   matchedMovies: string[];

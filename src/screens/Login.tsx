@@ -44,7 +44,9 @@ const Login = () => {
             name,
             photoUrl,
           })
-          .then(({ data }) => setUser(data));
+          .then(({ data }) => {
+            setUser(data);
+          });
       } else {
         console.log('cancelled');
       }

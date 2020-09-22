@@ -133,6 +133,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
 const styles = StyleSheet.create({
   view: {
     flex: 1,
+    backgroundColor: theme.background,
   },
   message: {
     color: theme.secondary,

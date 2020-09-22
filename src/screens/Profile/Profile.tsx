@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import {
   ScrollView,
   View,
@@ -8,6 +8,8 @@ import {
   Button,
   StatusBar,
   TouchableOpacity,
+  SafeAreaView,
+  Alert,
 } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -20,16 +22,37 @@ import {
   User,
   initialUserState,
 } from '../../context/UserProvider';
+import { SocketContext } from '../../context/SocketProvider';
 
 const Profile = () => {
   const { user } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
   const [pairedUser, setPairedUser] = useState<User>(initialUserState);
   const navigation = useNavigation();
+
+  const unmatchAlert = () =>
+    Alert.alert(
+      `Unmatch`,
+      `Are you sure you want to unmatch with ${pairedUser.givenName}?`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Unmatch',
+          onPress: () => console.log('OK Pressed'),
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
 
   useEffect(() => {
     if (!!user.matchedWith)
       axios
-        .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith}`)
+        .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
     else if (!!user.sentPairRequest)
@@ -38,6 +61,20 @@ const Profile = () => {
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
   }, [user.sentPairRequest, user.matchedWith]);
+
+  const deletePairRequest = useCallback(() => {
+    socket.emit('deletePairRequest', {
+      senderId: user._id,
+      recipientId: pairedUser._id,
+    });
+  }, [pairedUser._id]);
+
+  const unmatch = useCallback(() => {
+    socket.emit('deletePairRequest', {
+      senderId: user._id,
+      recipientId: pairedUser._id,
+    });
+  }, [pairedUser._id]);
 
   const notPaired: JSX.Element = (
     <ProfileButton
@@ -86,8 +123,8 @@ const Profile = () => {
         </>
       }
       endIcon={
-        <TouchableOpacity>
-          <AntDesign name="deleteuser" size={24} color={theme.primary} />
+        <TouchableOpacity onPress={deletePairRequest}>
+          <AntDesign name="deleteuser" size={24} color={theme.danger} />
         </TouchableOpacity>
       }
       success
@@ -100,18 +137,31 @@ const Profile = () => {
     <ProfileButton
       title={pairedUser.name}
       icon={
-        <Image
-          style={{
-            height: 24,
-            width: 24,
-            borderRadius: 150,
-            resizeMode: 'cover',
-          }}
-          source={{ uri: pairedUser.photoUrl }}
-        />
+        <>
+          {!!pairedUser.photoUrl ? (
+            <Image
+              style={{
+                height: 24,
+                width: 24,
+                borderRadius: 150,
+                resizeMode: 'cover',
+              }}
+              source={{ uri: pairedUser.photoUrl }}
+            />
+          ) : (
+            <View
+              style={{
+                height: 24,
+                width: 24,
+                borderRadius: 150,
+                backgroundColor: theme.secondary,
+              }}
+            />
+          )}
+        </>
       }
       endIcon={
-        <TouchableOpacity>
+        <TouchableOpacity onPress={unmatchAlert}>
           <AntDesign name="deleteuser" size={24} color={theme.danger} />
         </TouchableOpacity>
       }
@@ -121,81 +171,87 @@ const Profile = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
-        <View style={styles.header}>
-          <Image style={styles.profileImg} source={{ uri: user.photoUrl }} />
-        </View>
-        <ScrollView style={styles.profileCardContainer}>
-          <View style={styles.profileCard}>
-            <View style={styles.info}>
-              <Text style={styles.name}>{user.name}</Text>
-              <Text style={styles.email}>{user.email}</Text>
-            </View>
-            {!!user.sentPairRequest
-              ? requested
-              : !user.matchedWith
-              ? notPaired
-              : matched}
-            <ProfileButton
-              title="Pair requests"
-              number={user.receivedPairRequests.length}
-              icon={<AntDesign name="bells" size={24} color={theme.black} />}
-              endIcon={
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={24}
-                  color={theme.black}
-                />
-              }
-              onPress={() =>
-                navigation.navigate('MovieList', {
-                  movies: user.watchedMovies,
-                  title: 'Watched Movies',
-                })
-              }
-            />
-            <ProfileButton
-              title="Watched Movies"
-              number={user.watchedMovies.length}
-              icon={<AntDesign name="check" size={24} color={theme.black} />}
-              endIcon={
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={24}
-                  color={theme.black}
-                />
-              }
-              onPress={() =>
-                navigation.navigate('MovieList', {
-                  movies: user.watchedMovies,
-                  title: 'Watched Movies',
-                })
-              }
-            />
-            <ProfileButton
-              title="Ignored Movies"
-              icon={<AntDesign name="close" size={24} color={theme.black} />}
-              number={user.ignoredMovies.length}
-              endIcon={
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={24}
-                  color={theme.black}
-                />
-              }
-              onPress={() =>
-                navigation.navigate('MovieList', {
-                  movies: user.ignoredMovies,
-                  title: 'Ignored Movies',
-                })
-              }
-            />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
+          <View style={styles.header}>
+            <Image style={styles.profileImg} source={{ uri: user.photoUrl }} />
           </View>
-        </ScrollView>
+          <ScrollView style={styles.profileCardContainer}>
+            <View style={styles.profileCard}>
+              <View style={styles.info}>
+                <Text style={styles.name}>{user.name}</Text>
+                <Text style={styles.email}>{user.email}</Text>
+              </View>
+              {!!user.sentPairRequest
+                ? requested
+                : !user.matchedWith
+                ? notPaired
+                : matched}
+              {!user.matchedWith && (
+                <ProfileButton
+                  title="Pair requests"
+                  number={user.receivedPairRequests.length}
+                  icon={
+                    <AntDesign name="bells" size={24} color={theme.black} />
+                  }
+                  endIcon={
+                    <Ionicons
+                      name="ios-arrow-forward"
+                      size={24}
+                      color={theme.black}
+                    />
+                  }
+                  onPress={() =>
+                    navigation.navigate('MovieList', {
+                      movies: user.watchedMovies,
+                      title: 'Watched Movies',
+                    })
+                  }
+                />
+              )}
+              <ProfileButton
+                title="Watched Movies"
+                number={user.watchedMovies.length}
+                icon={<AntDesign name="check" size={24} color={theme.black} />}
+                endIcon={
+                  <Ionicons
+                    name="ios-arrow-forward"
+                    size={24}
+                    color={theme.black}
+                  />
+                }
+                onPress={() =>
+                  navigation.navigate('MovieList', {
+                    movies: user.watchedMovies,
+                    title: 'Watched Movies',
+                  })
+                }
+              />
+              <ProfileButton
+                title="Ignored Movies"
+                icon={<AntDesign name="close" size={24} color={theme.black} />}
+                number={user.ignoredMovies.length}
+                endIcon={
+                  <Ionicons
+                    name="ios-arrow-forward"
+                    size={24}
+                    color={theme.black}
+                  />
+                }
+                onPress={() =>
+                  navigation.navigate('MovieList', {
+                    movies: user.ignoredMovies,
+                    title: 'Ignored Movies',
+                  })
+                }
+              />
+            </View>
+          </ScrollView>
+        </View>
+        <Button title="Logout" onPress={() => {}} />
       </View>
-      <Button title="Logout" onPress={() => {}} color={theme.black} />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -203,7 +259,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: theme.background,
+    backgroundColor: theme.white,
     paddingHorizontal: 20,
     paddingBottom: 10,
   },

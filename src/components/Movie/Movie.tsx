@@ -20,8 +20,10 @@ const Movie: React.FC<Props> = ({ id }) => {
       <View style={styles.container}>
         <View style={styles.imagePh} />
         <View style={styles.infoContainer}>
-          <View style={styles.titlePh} />
-          <View style={styles.subTextPh} />
+          <View>
+            <View style={styles.titlePh} />
+            <View style={styles.subTextPh} />
+          </View>
         </View>
       </View>
     );

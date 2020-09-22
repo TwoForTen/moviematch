@@ -22,7 +22,7 @@ const SearchUsers: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const {
-    user: { _id, matchedWith, sentPairRequest },
+    user: { _id, matchedWith, sentPairRequest, receivedPairRequests },
   } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
 
@@ -48,8 +48,16 @@ const SearchUsers: React.FC = () => {
     []
   );
 
-  const sendPairRequest = useCallback((userId: string) => {
-    socket.emit('pairRequest', { _id, userId });
+  const sendPairRequest = useCallback((recipientId: string) => {
+    socket.emit('pairRequest', { senderId: _id, recipientId });
+  }, []);
+
+  const deletePairRequest = useCallback((recipientId: string) => {
+    socket.emit('deletePairRequest', { senderId: _id, recipientId });
+  }, []);
+
+  const matchWithUser = useCallback((recipientId: string) => {
+    socket.emit('match', { senderId: _id, recipientId });
   }, []);
 
   return (
@@ -88,7 +96,18 @@ const SearchUsers: React.FC = () => {
               <Text style={styles.name}>{user.name}</Text>
               <Text style={styles.email}>{user.email}</Text>
             </View>
-            {!matchedWith && !sentPairRequest && !user.matchedWith ? (
+            {receivedPairRequests.includes(user._id) ? (
+              <TouchableOpacity onPress={matchWithUser.bind(this, user._id)}>
+                <AntDesign name="adduser" size={24} color={theme.primary} />
+              </TouchableOpacity>
+            ) : sentPairRequest === user._id ? (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={deletePairRequest.bind(this, user._id)}
+              >
+                <AntDesign name="deleteuser" size={24} color={theme.danger} />
+              </TouchableOpacity>
+            ) : !matchedWith && !sentPairRequest && !user.matchedWith ? (
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={sendPairRequest.bind(this, user._id)}
@@ -96,19 +115,12 @@ const SearchUsers: React.FC = () => {
                 <AntDesign name="adduser" size={24} color={theme.black} />
               </TouchableOpacity>
             ) : (
-              sentPairRequest === user._id && (
-                <TouchableOpacity
-                  disabled
-                  style={styles.addButton}
-                  onPress={sendPairRequest.bind(this, user._id)}
-                >
-                  <AntDesign
-                    name="deleteuser"
-                    size={24}
-                    color={theme.primary}
-                  />
-                </TouchableOpacity>
-              )
+              <AntDesign
+                name="adduser"
+                size={24}
+                color={theme.secondary}
+                style={{ opacity: 0.5 }}
+              />
             )}
           </View>
         ))}

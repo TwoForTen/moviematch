@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'cover',
     flex: 1,
+    backgroundColor: theme.background,
   },
   background: {
     flex: 1,
