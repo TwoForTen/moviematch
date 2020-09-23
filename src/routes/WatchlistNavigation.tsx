@@ -16,7 +16,12 @@ const Stack = createStackNavigator<WatchlistStackParamList>();
 const PickGenre: React.FC = () => {
   return (
     <TouchableOpacity style={{ padding: 20 }}>
-      <AntDesign name="setting" size={24} color={theme.black} />
+      <AntDesign
+        style={{ transform: [{ rotate: '90deg' }] }}
+        name="swap"
+        size={24}
+        color={theme.black}
+      />
     </TouchableOpacity>
   );
 };

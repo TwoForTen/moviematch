@@ -7,9 +7,10 @@ import theme from '../../theme';
 
 interface Props {
   id: string;
+  title: string;
 }
 
-const Actions: React.FC<Props> = ({ id }) => {
+const Actions: React.FC<Props> = ({ id, title }) => {
   const { setStatusModal } = useContext(StatusModalContext);
 
   return (
@@ -17,7 +18,7 @@ const Actions: React.FC<Props> = ({ id }) => {
       <TouchableOpacity
         style={styles.watchlist}
         activeOpacity={0.5}
-        onPress={() => setStatusModal({ isOpen: true, movieId: id })}
+        onPress={() => setStatusModal({ isOpen: true, movieId: id, title })}
       >
         <Text style={styles.text}>Change Status</Text>
       </TouchableOpacity>

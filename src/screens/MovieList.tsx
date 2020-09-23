@@ -3,6 +3,8 @@ import { View, FlatList, Text, StyleSheet, Switch, Button } from 'react-native';
 import { isEmpty } from 'lodash';
 import { AntDesign } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 import useChangeMovieStatus, {
   SwitchName,
@@ -10,7 +12,7 @@ import useChangeMovieStatus, {
 } from '../hooks/useChangeMovieStatus';
 import theme from '../theme';
 import { StatusModalContext } from '../context/StatusModalProvider';
-import { UserContext } from '../context/UserProvider';
+import { UserContext, User, initialUserState } from '../context/UserProvider';
 import Movie from '../components/Movie/Movie';
 import { RouteProp } from '@react-navigation/native';
 import { ProfileStackParamList } from '../routes/ProfileNavigation';
@@ -23,12 +25,15 @@ interface Props {
 const MovieList: React.FC<Props> = ({ route }) => {
   const { statusModal, setStatusModal } = useContext(StatusModalContext);
   const { user } = useContext(UserContext);
+  const navigation = useNavigation();
   const changeMovieStatus = useChangeMovieStatus();
   const {
     params: { movies },
   } = route;
+  const [refresh, setRefresh] = useState(false);
+  const [pairedUser, setPairedUser] = useState<User>(initialUserState);
 
-  const memoizedUser = React.useMemo(() => user, [statusModal.isOpen]);
+  const memoizedUser = React.useMemo(() => user, [statusModal.isOpen, refresh]);
 
   const switchValuesState: SwitchValues = {
     watchedMovies: user?.watchedMovies.includes(statusModal.movieId || ''),
@@ -40,7 +45,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
   );
 
   const closeModal = (): void =>
-    setStatusModal({ isOpen: false, movieId: null });
+    setStatusModal({ isOpen: false, movieId: null, title: '' });
 
   const onSwitchChange = async (
     switchValue: boolean,
@@ -57,11 +62,26 @@ const MovieList: React.FC<Props> = ({ route }) => {
 
   useEffect(() => {
     setSwitchValues(switchValuesState);
-  }, [statusModal]);
+  }, [statusModal.movieId]);
 
   useEffect(() => {
-    return () => closeModal();
+    navigation.addListener('focus', () => setRefresh(true));
+    navigation.addListener('blur', () => setRefresh(false));
+
+    return () => {
+      navigation.removeListener('focus', () => setRefresh(true));
+      navigation.addListener('blur', () => setRefresh(false));
+    };
   }, []);
+
+  useEffect(() => {
+    if (user.matchedWith) {
+      axios
+        .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
+        .then(({ data }) => setPairedUser(data))
+        .catch(() => {});
+    }
+  }, [refresh]);
 
   if (isEmpty(memoizedUser[movies]))
     return <EmptyList icon="warning" message="List is empty" />;
@@ -70,21 +90,27 @@ const MovieList: React.FC<Props> = ({ route }) => {
     <View style={styles.view}>
       <FlatList
         data={memoizedUser[movies]}
-        renderItem={({ item }) => <Movie id={item} key={item} />}
+        renderItem={({ item }) => (
+          <Movie
+            id={item}
+            key={item}
+            match={pairedUser.matchedMovies.includes(item)}
+          />
+        )}
         keyExtractor={(item) => item.toString()}
       />
       <Modal
         style={styles.modal}
         isVisible={statusModal.isOpen}
-        coverScreen={false}
-        hasBackdrop
         onDismiss={closeModal}
         onBackdropPress={closeModal}
         onBackButtonPress={closeModal}
         useNativeDriver
+        hideModalContentWhileAnimating
       >
         <View style={styles.modalContent}>
           <View>
+            <Text style={styles.title}>{statusModal.title}</Text>
             <View style={styles.watchedSection}>
               <View style={{ flexDirection: 'row' }}>
                 <AntDesign name="check" size={24} color={theme.primary} />
@@ -143,6 +169,11 @@ const styles = StyleSheet.create({
     flex: 0.3,
     padding: 20,
     justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   watchedSection: {
     flexDirection: 'row',
