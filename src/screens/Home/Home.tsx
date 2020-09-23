@@ -1,12 +1,17 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { StyleSheet, Image, View, ActivityIndicator } from 'react-native';
 import { debounce, isEmpty } from 'lodash';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import {
+  GestureHandlerGestureEventNativeEvent,
+  PanGestureHandler,
+  PanGestureHandlerEventExtra,
+} from 'react-native-gesture-handler';
 
 import useFetchData from '../../hooks/useFetchData';
 import InfoModal from '../../components/Home/InfoModal';
 import theme from '../../theme';
 import { UserContext } from '../../context/UserProvider';
+import { SocketContext } from '../../context/SocketProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
@@ -16,28 +21,39 @@ const Home = () => {
   const [movies, setMovies] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const { user } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
 
   const { loading, response } = useFetchData({
     url: `/trending/movie/day?page=${page}`,
   });
 
   const handleSwipe = useCallback(
-    debounce(() => {
-      {
+    debounce(
+      (
+        nativeEvent: GestureHandlerGestureEventNativeEvent &
+          PanGestureHandlerEventExtra
+      ) => {
+        if (nativeEvent.velocityX > 0)
+          socket.emit('addToWatchlist', {
+            senderId: user._id,
+            movie: movies[movie].id,
+          });
+
         if (movie >= movies.length - 3)
           setPage((prev) => (prev < response.total_pages ? prev + 1 : prev));
         setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev + 2));
-      }
-    }, 200),
+      },
+      200
+    ),
     [movie, movies, response.total_pages]
   );
 
   useEffect(() => {
     setMovies((prev) => [
       ...prev,
-      ...response.results.filter(
-        (item: any) => !user.ignoredMovies.includes(item.id)
-      ),
+      ...response.results
+        .filter((item: any) => !user.ignoredMovies.includes(item.id))
+        .filter((item: any) => !user.matchedMovies.includes(item.id)),
     ]);
   }, [response.results]);
 
@@ -56,7 +72,10 @@ const Home = () => {
     );
 
   return (
-    <PanGestureHandler activeOffsetX={[-25, 25]} onGestureEvent={handleSwipe}>
+    <PanGestureHandler
+      activeOffsetX={[-25, 25]}
+      onGestureEvent={({ nativeEvent }) => handleSwipe(nativeEvent)}
+    >
       <PanGestureHandler
         activeOffsetY={-100}
         onGestureEvent={({ nativeEvent }) =>

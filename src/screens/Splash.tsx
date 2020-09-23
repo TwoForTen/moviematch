@@ -23,10 +23,12 @@ const Splash = () => {
         setUser(user);
       });
 
-      if (!!user.matchedWith)
+      if (!!user.matchedWith) {
         socket.emit('joinMatch', user.matchedWith.matchId);
+        socket.on('matchedMovie', (movie: number) => console.log(movie));
+      }
     }
-  }, [user._id, user.matchedWith]);
+  }, [user._id, user.matchedWith?.matchId]);
 
   const userToken = async () => {
     try {

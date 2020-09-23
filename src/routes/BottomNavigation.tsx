@@ -3,11 +3,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign } from '@expo/vector-icons';
 
 import HomeNavigation from './HomeNavigation';
-import Watchlist from '../screens/Watchlist';
+import WatchlistNavigation from './WatchlistNavigation';
 import ProfileNavigation from './ProfileNavigation';
 import theme from '../theme';
 
-const Tab = createBottomTabNavigator();
+export type BottomStackParamList = {
+  Home: undefined;
+  Watchlist: undefined;
+  Profile: undefined;
+};
+
+const Tab = createBottomTabNavigator<BottomStackParamList>();
 
 const BottomNavigation = () => {
   return (
@@ -25,8 +31,8 @@ const BottomNavigation = () => {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={Watchlist}
+        name="Watchlist"
+        component={WatchlistNavigation}
         options={{
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="bars" size={size} color={color} />

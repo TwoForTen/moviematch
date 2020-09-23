@@ -9,9 +9,11 @@ import SearchUsers from '../screens/Profile/SearchUsers';
 import PairRequests from '../screens/Profile/PairRequests';
 import MovieList from '../screens/MovieList';
 
+export type ListType = 'watchedMovies' | 'ignoredMovies' | 'matchedMovies';
+
 export type ProfileStackParamList = {
   Profile: undefined;
-  MovieList: { movies: string[]; title: string };
+  MovieList: { movies: ListType; title: string };
   SearchUsers: { title: string };
   PairRequests: undefined;
 };

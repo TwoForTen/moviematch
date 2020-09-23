@@ -219,7 +219,7 @@ const Profile = () => {
                 }
                 onPress={() =>
                   navigation.navigate('MovieList', {
-                    movies: user.watchedMovies,
+                    movies: 'watchedMovies',
                     title: 'Watched Movies',
                   })
                 }
@@ -237,7 +237,7 @@ const Profile = () => {
                 }
                 onPress={() =>
                   navigation.navigate('MovieList', {
-                    movies: user.ignoredMovies,
+                    movies: 'ignoredMovies',
                     title: 'Ignored Movies',
                   })
                 }

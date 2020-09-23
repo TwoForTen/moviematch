@@ -28,6 +28,8 @@ const MovieList: React.FC<Props> = ({ route }) => {
     params: { movies },
   } = route;
 
+  const memoizedUser = React.useMemo(() => user, [statusModal.isOpen]);
+
   const switchValuesState: SwitchValues = {
     watchedMovies: user?.watchedMovies.includes(statusModal.movieId || ''),
     ignoredMovies: user?.ignoredMovies.includes(statusModal.movieId || ''),
@@ -61,13 +63,13 @@ const MovieList: React.FC<Props> = ({ route }) => {
     return () => closeModal();
   }, []);
 
-  if (isEmpty(movies))
+  if (isEmpty(memoizedUser[movies]))
     return <EmptyList icon="warning" message="List is empty" />;
 
   return (
     <View style={styles.view}>
       <FlatList
-        data={movies}
+        data={memoizedUser[movies]}
         renderItem={({ item }) => <Movie id={item} key={item} />}
         keyExtractor={(item) => item.toString()}
       />
