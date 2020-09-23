@@ -21,6 +21,7 @@ import useChangeMovieStatus, {
 } from '../../hooks/useChangeMovieStatus';
 import ReviewStars from '../ReviewStars';
 import { UserContext } from '../../context/UserProvider';
+import Trailer from 'src/screens/Home/Trailer';
 
 interface Props {
   data: any;
@@ -64,7 +65,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
 
   useEffect(() => {
     setSwitchValues(switchValuesState);
-  }, [data.id]);
+  }, [data.id, user.watchedMovies, user.ignoredMovies]);
 
   if (!data) return null;
 
@@ -142,6 +143,9 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   style={styles.trailer}
                   source={{ uri: imageUrl + data.backdrop_path }}
                 >
+                  {!!!data.backdrop_path && (
+                    <View style={styles.trailerPlaceholder} />
+                  )}
                   <LinearGradient
                     style={styles.gradient}
                     colors={['rgba(0,0,0,0.8)', 'transparent']}
@@ -154,6 +158,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                         ''}
                     </Text>
                   </LinearGradient>
+
                   <Entypo name="controller-play" size={80} color="white" />
                 </ImageBackground>
               </TouchableOpacity>
@@ -217,6 +222,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  trailerPlaceholder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+    backgroundColor: theme.secondary,
+    opacity: 0.8,
   },
   trailerTitle: {
     color: 'white',

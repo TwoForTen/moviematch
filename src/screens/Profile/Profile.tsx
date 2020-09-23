@@ -42,7 +42,7 @@ const Profile = () => {
         },
         {
           text: 'Unmatch',
-          onPress: () => console.log('OK Pressed'),
+          onPress: () => unmatch(),
           style: 'destructive',
         },
       ],
@@ -70,7 +70,8 @@ const Profile = () => {
   }, [pairedUser._id]);
 
   const unmatch = useCallback(() => {
-    socket.emit('deletePairRequest', {
+    socket.emit('leaveMatch', user.matchedWith?.matchId);
+    socket.emit('unmatch', {
       senderId: user._id,
       recipientId: pairedUser._id,
     });
@@ -177,7 +178,7 @@ const Profile = () => {
           <View style={styles.header}>
             <Image style={styles.profileImg} source={{ uri: user.photoUrl }} />
           </View>
-          <ScrollView style={styles.profileCardContainer}>
+          <View style={styles.profileCardContainer}>
             <View style={styles.profileCard}>
               <View style={styles.info}>
                 <Text style={styles.name}>{user.name}</Text>
@@ -202,12 +203,7 @@ const Profile = () => {
                       color={theme.black}
                     />
                   }
-                  onPress={() =>
-                    navigation.navigate('MovieList', {
-                      movies: user.watchedMovies,
-                      title: 'Watched Movies',
-                    })
-                  }
+                  onPress={() => navigation.navigate('PairRequests')}
                 />
               )}
               <ProfileButton
@@ -247,7 +243,7 @@ const Profile = () => {
                 }
               />
             </View>
-          </ScrollView>
+          </View>
         </View>
         <Button title="Logout" onPress={() => {}} />
       </View>

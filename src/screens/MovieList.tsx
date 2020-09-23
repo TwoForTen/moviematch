@@ -14,6 +14,7 @@ import { UserContext } from '../context/UserProvider';
 import Movie from '../components/Movie/Movie';
 import { RouteProp } from '@react-navigation/native';
 import { ProfileStackParamList } from '../routes/ProfileNavigation';
+import EmptyList from '../components/EmptyList';
 
 interface Props {
   route: RouteProp<ProfileStackParamList, 'MovieList'>;
@@ -61,17 +62,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
   }, []);
 
   if (isEmpty(movies))
-    return (
-      <View
-        style={[
-          styles.view,
-          { alignItems: 'center', justifyContent: 'center' },
-        ]}
-      >
-        <AntDesign name="warning" size={26} color={theme.secondary} />
-        <Text style={styles.message}>List is empty</Text>
-      </View>
-    );
+    return <EmptyList icon="warning" message="List is empty" />;
 
   return (
     <View style={styles.view}>
