@@ -5,4 +5,5 @@ export default {
   background: '#f2f2f2',
   black: '#000',
   white: '#fff',
+  darkTransparent: 'rgba(20,20,20,0.95)',
 };

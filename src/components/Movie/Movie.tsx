@@ -32,24 +32,26 @@ const Movie: React.FC<Props> = ({ id, match }) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        style={styles.image}
-        source={{ uri: imageUrl + response?.poster_path }}
-      >
-        {match && (
-          <View
-            style={{
-              backgroundColor: theme.background,
-              alignSelf: 'flex-start',
-              margin: -10,
-              padding: 5,
-              borderRadius: 100,
-            }}
-          >
-            <AntDesign name="eye" size={24} color={theme.danger} />
-          </View>
-        )}
-      </ImageBackground>
+      <View style={{ borderRadius: 10, overflow: 'hidden' }}>
+        <ImageBackground
+          style={styles.image}
+          source={{ uri: imageUrl + response?.poster_path }}
+        >
+          {match && (
+            <View
+              style={{
+                backgroundColor: theme.background,
+                alignSelf: 'flex-start',
+                margin: -7,
+                padding: 5,
+                borderRadius: 100,
+              }}
+            >
+              <AntDesign name="eye" size={24} color={theme.danger} />
+            </View>
+          )}
+        </ImageBackground>
+      </View>
       <View style={styles.infoContainer}>
         <View>
           <Text style={styles.title}>{response?.title}</Text>

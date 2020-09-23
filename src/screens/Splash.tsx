@@ -1,18 +1,31 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Image } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AppLoading } from 'expo';
 import axios from 'axios';
+import axiosInstance from '../../axiosInstance';
 
 import Login from './Login';
 import Routes from '../routes';
 import { UserContext, User } from '../context/UserProvider';
 import { SocketContext } from '../context/SocketProvider';
 import theme from '../theme';
+import Snackbar from '../components/Snackbar';
+
+export interface SnackbarType {
+  show: boolean;
+  image: string;
+  movieTitle: string;
+}
 
 const Splash = () => {
   const [appReady, setAppReady] = useState<boolean>(false);
   const [token, setToken] = useState<string>('');
+  const [{ show, image, movieTitle }, setSnackbar] = useState<SnackbarType>({
+    show: false,
+    image: '',
+    movieTitle: '',
+  });
   const { user, setUser } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
 
@@ -25,7 +38,18 @@ const Splash = () => {
 
       if (!!user.matchedWith) {
         socket.emit('joinMatch', user.matchedWith.matchId);
-        socket.on('matchedMovie', (movie: number) => console.log(movie));
+        socket.on('matchedMovie', (movie: number) =>
+          axiosInstance
+            .get(`/movie/${movie}`)
+            .then(({ data }) =>
+              setSnackbar({
+                show: true,
+                image: data.poster_path,
+                movieTitle: data.title,
+              })
+            )
+            .catch(() => {})
+        );
       }
     }
   }, [user._id, user.matchedWith?.matchId]);
@@ -75,7 +99,15 @@ const Splash = () => {
           <ActivityIndicator size={40} color={theme.primary} />
         </View>
       ) : (
-        <Routes />
+        <>
+          <Snackbar
+            isVisible={show}
+            image={image}
+            movieTitle={movieTitle}
+            setSnackbar={setSnackbar}
+          />
+          <Routes />
+        </>
       )}
     </>
   );
