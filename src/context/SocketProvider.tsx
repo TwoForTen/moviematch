@@ -8,7 +8,13 @@ interface SocketType {
 export const SocketContext = createContext<SocketType>({ socket: io() });
 
 const SocketProvider: React.FC = ({ children }) => {
-  const socket = io('http://192.168.1.6:3000');
+  const socket = io('http://192.168.1.6:3000', {
+    reconnection: true,
+    reconnectionDelay: 500,
+    reconnectionAttempts: Infinity,
+    forceNew: true,
+  });
+
   return (
     <SocketContext.Provider value={{ socket }}>
       {children}

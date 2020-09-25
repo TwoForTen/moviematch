@@ -29,10 +29,12 @@ const useFetchData = (config: AxiosRequestConfig): FetchData => {
       .then(({ data }) => {
         setResponse(data);
         setLoading(false);
+        source.cancel('');
       })
       .catch((err) => {
         setError(`Error`);
         setLoading(false);
+        source.cancel('');
       });
 
     return () => source.cancel('');

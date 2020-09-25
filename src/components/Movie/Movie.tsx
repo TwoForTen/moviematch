@@ -9,7 +9,7 @@ import Actions from './Actions';
 
 interface Props {
   id: string;
-  match: boolean;
+  match: string;
 }
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
@@ -37,17 +37,17 @@ const Movie: React.FC<Props> = ({ id, match }) => {
           style={styles.image}
           source={{ uri: imageUrl + response?.poster_path }}
         >
-          {match && (
+          {!!match && (
             <View
               style={{
                 backgroundColor: theme.background,
                 alignSelf: 'flex-start',
-                margin: -7,
-                padding: 5,
+                margin: -5.5,
+                padding: 6,
                 borderRadius: 100,
               }}
             >
-              <AntDesign name="eye" size={24} color={theme.danger} />
+              <AntDesign name="heart" size={18} color={theme.danger} />
             </View>
           )}
         </ImageBackground>
@@ -61,7 +61,11 @@ const Movie: React.FC<Props> = ({ id, match }) => {
               ?.map((genre: { name: string }) => genre.name)
               .join(', ')}
           </Text>
-          {match && <Text>This is a match</Text>}
+          {!!match && (
+            <Text
+              style={{ fontStyle: 'italic' }}
+            >{`${match} also matched this movie`}</Text>
+          )}
         </View>
         {!!id && <Actions id={id} title={response?.title} />}
       </View>

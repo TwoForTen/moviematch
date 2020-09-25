@@ -114,7 +114,7 @@ const SearchUsers: React.FC = () => {
               >
                 <AntDesign name="adduser" size={24} color={theme.black} />
               </TouchableOpacity>
-            ) : matchedWith?.matchId === user.matchedWith?.matchId ? (
+            ) : matchedWith?.matchId ?? user.matchedWith?.matchId ? (
               <AntDesign name="check" size={24} color={theme.primary} />
             ) : (
               <AntDesign

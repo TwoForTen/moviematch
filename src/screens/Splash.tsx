@@ -32,6 +32,11 @@ const Splash = () => {
   useEffect(() => {
     if (!!user._id) {
       socket.emit('clientJoined', user._id);
+      socket.addEventListener('connect', () => {
+        socket.emit('clientJoined', user._id);
+        if (!!user.matchedWith)
+          socket.emit('joinMatch', user.matchedWith.matchId);
+      });
       socket.on('userStateUpdate', (user: User) => {
         setUser(user);
       });

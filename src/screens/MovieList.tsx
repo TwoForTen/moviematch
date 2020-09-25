@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { View, FlatList, Text, StyleSheet, Switch, Button } from 'react-native';
-import { isEmpty } from 'lodash';
+import { isEmpty, sortBy } from 'lodash';
 import { AntDesign } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
@@ -33,7 +33,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
   const [refresh, setRefresh] = useState(false);
   const [pairedUser, setPairedUser] = useState<User>(initialUserState);
 
-  const memoizedUser = React.useMemo(() => user, [statusModal.isOpen, refresh]);
+  const memoizedUser = useMemo(() => user, [statusModal.isOpen, refresh]);
 
   const switchValuesState: SwitchValues = {
     watchedMovies: user?.watchedMovies.includes(statusModal.movieId || ''),
@@ -75,12 +75,18 @@ const MovieList: React.FC<Props> = ({ route }) => {
   }, []);
 
   useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
     if (user.matchedWith) {
       axios
         .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
+    } else {
+      setPairedUser(initialUserState);
     }
+
+    return () => source.cancel();
   }, [refresh]);
 
   if (isEmpty(memoizedUser[movies]))
@@ -89,12 +95,19 @@ const MovieList: React.FC<Props> = ({ route }) => {
   return (
     <View style={styles.view}>
       <FlatList
-        data={memoizedUser[movies]}
+        data={sortBy(
+          [...memoizedUser[movies]],
+          [(item) => pairedUser.matchedMovies.includes(item)]
+        ).reverse()}
         renderItem={({ item }) => (
           <Movie
             id={item}
             key={item}
-            match={pairedUser.matchedMovies.includes(item)}
+            match={
+              pairedUser.matchedMovies.includes(item)
+                ? pairedUser.givenName
+                : ''
+            }
           />
         )}
         keyExtractor={(item) => item.toString()}
