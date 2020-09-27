@@ -6,6 +6,7 @@ import Splash from './src/screens/Splash';
 import UserProvider from './src/context/UserProvider';
 import StatusModalProvider from './src/context/StatusModalProvider';
 import SocketProvider from './src/context/SocketProvider';
+import GenreProvider from './src/context/GenreProvider';
 import theme from './src/theme';
 
 export default function App() {
@@ -22,9 +23,11 @@ export default function App() {
       <UserProvider>
         <SocketProvider>
           <StatusModalProvider>
-            <View style={styles.container}>
-              <Splash />
-            </View>
+            <GenreProvider>
+              <View style={styles.container}>
+                <Splash />
+              </View>
+            </GenreProvider>
           </StatusModalProvider>
         </SocketProvider>
       </UserProvider>

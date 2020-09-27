@@ -12,6 +12,7 @@ import InfoModal from '../../components/Home/InfoModal';
 import theme from '../../theme';
 import { UserContext } from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
+import { GenreContext } from '../../context/GenreProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
@@ -22,9 +23,12 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const { user } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
+  const { genre } = useContext(GenreContext);
 
   const { loading, response } = useFetchData({
-    url: `/trending/movie/day?page=${page}`,
+    url: `/discover/movie?page=${page}&with_genres=${
+      genre.id !== '0' ? genre.id : ''
+    }`,
   });
 
   const handleSwipe = useCallback(
@@ -39,7 +43,7 @@ const Home = () => {
             movie: movies[movie].id,
           });
 
-        if (movie >= movies.length - 3)
+        if (movie >= movies.length)
           setPage((prev) => (prev < response.total_pages ? prev + 1 : prev));
         setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev + 2));
       },
@@ -56,6 +60,10 @@ const Home = () => {
         .filter((item: any) => !user.matchedMovies.includes(item.id)),
     ]);
   }, [response.results]);
+
+  useEffect(() => {
+    setMovie(movies.length);
+  }, [genre]);
 
   useEffect(() => {
     if (isEmpty(movies))
