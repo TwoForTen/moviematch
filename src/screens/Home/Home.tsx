@@ -6,30 +6,41 @@ import {
   PanGestureHandler,
   PanGestureHandlerEventExtra,
 } from 'react-native-gesture-handler';
+import axios from 'axios';
+import axiosInstance from '../../../axiosInstance';
 
-import useFetchData from '../../hooks/useFetchData';
+import useDataFetch from '../../hooks/useDataFetch';
 import InfoModal from '../../components/Home/InfoModal';
 import theme from '../../theme';
-import { UserContext } from '../../context/UserProvider';
+import {
+  UserContext,
+  User,
+  initialUserState,
+} from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
 import { GenreContext } from '../../context/GenreProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
+
+const fetcher = (page: number, genre: string) =>
+  axiosInstance.get(
+    `/discover/movie?page=${page}&with_genres=${genre !== '0' ? genre : ''}`
+  );
 
 const Home = () => {
   const [showModal, setShowModal] = useState<boolean>(true);
   const [movie, setMovie] = useState<number>(0);
   const [movies, setMovies] = useState<any[]>([]);
   const [page, setPage] = useState(1);
+  const [pairedUser, setPairedUser] = useState<User>(initialUserState);
   const { user } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
   const { genre } = useContext(GenreContext);
 
-  const { loading, response } = useFetchData({
-    url: `/discover/movie?page=${page}&with_genres=${
-      genre.id !== '0' ? genre.id : ''
-    }`,
-  });
+  const { loading, response } = useDataFetch(
+    'homeMovieList',
+    fetcher(page, genre.id)
+  );
 
   const handleSwipe = useCallback(
     debounce(
@@ -69,6 +80,14 @@ const Home = () => {
     if (isEmpty(movies))
       setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
   }, [movies]);
+
+  useEffect(() => {
+    if (user.matchedWith)
+      axios
+        .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
+        .then(({ data }) => setPairedUser(data))
+        .catch(() => {});
+  }, []);
 
   if (loading || isEmpty(movies) || !movies[movie])
     return (

@@ -8,14 +8,17 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axiosInstance from '../../../axiosInstance';
 
-import useFetchData from '../../hooks/useFetchData';
+import useDataFetch from '../../hooks/useDataFetch';
 import theme from '../../theme';
 import { GenreContext, Genre } from '../../context/GenreProvider';
 
+const fetcher = () => axiosInstance.get('/genre/movie/list');
+
 const Settings = () => {
   const { setGenre } = useContext(GenreContext);
-  const { response, loading } = useFetchData({ url: '/genre/movie/list' });
+  const { response, loading } = useDataFetch('genres', fetcher());
   const navigation = useNavigation();
 
   const switchGenre = (genre: Genre) => {

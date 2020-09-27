@@ -12,9 +12,10 @@ import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import axiosInstance from '../../../axiosInstance';
 
 import theme from '../../theme';
-import useFetchData from '../../hooks/useFetchData';
+import useDataFetch from '../../hooks/useDataFetch';
 import useChangeMovieStatus, {
   SwitchName,
   SwitchValues,
@@ -30,6 +31,8 @@ interface Props {
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
 
+const fetcher = (id: string) => axiosInstance.get(`/movie/${id}/videos`);
+
 const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   const navigation = useNavigation();
   const changeMovieStatus = useChangeMovieStatus();
@@ -44,10 +47,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
     switchValuesState
   );
 
-  const { response } = useFetchData({
-    url: `/movie/${data.id}/videos`,
-    method: 'get',
-  });
+  const { response } = useDataFetch('trailer', fetcher(data.id));
 
   const onSwitchChange = async (
     switchValue: boolean,

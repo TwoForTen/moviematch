@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import ReviewStars from '../ReviewStars';
 import { AntDesign } from '@expo/vector-icons';
+import axiosInstance from '../../../axiosInstance';
 
-import useFetchData from '../../hooks/useFetchData';
+import useDataFetch from '../../hooks/useDataFetch';
 import theme from '../../theme';
 import Actions from './Actions';
 
@@ -14,8 +15,10 @@ interface Props {
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/w500';
 
+const fetcher = (id: string) => axiosInstance.get(`/movie/${id}`);
+
 const Movie: React.FC<Props> = ({ id, match }) => {
-  const { response, loading } = useFetchData({ url: `/movie/${id}` });
+  const { response, loading } = useDataFetch('movie', fetcher(id));
 
   if (loading)
     return (

@@ -40,6 +40,7 @@ const BottomNavigation = () => {
         component={WatchlistNavigation}
         options={{
           // unmountOnBlur: true,
+
           tabBarIcon: ({ size, color }) => (
             <View>
               <AntDesign name="bars" size={size} color={color} />

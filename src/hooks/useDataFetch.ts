@@ -1,39 +1,31 @@
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance';
 import axios from 'axios';
-import { AxiosRequestConfig } from 'axios';
 
 interface FetchData {
   loading: boolean;
   response: any;
 }
 
-const useFetchData = (config: AxiosRequestConfig): FetchData => {
+const useDataFetch = (key: string, fetcher: Promise<any>): FetchData => {
   const [loading, setLoading] = useState<boolean>(true);
   const [response, setResponse] = useState<any>({ results: [] });
-
-  const { url, params, data } = config;
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
-    axiosInstance({
-      url,
-      method: 'get',
-      params,
-      data,
-      cancelToken: source.token,
-    })
-      .then(({ data }) => {
-        setResponse(data);
+    fetcher
+      .then((data: any) => {
+        setResponse(data.data);
         setLoading(false);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.log(err);
+      });
 
     return () => {
       source.cancel();
     };
-  }, [config.url]);
+  }, [key]);
 
   return {
     loading,
@@ -41,4 +33,4 @@ const useFetchData = (config: AxiosRequestConfig): FetchData => {
   };
 };
 
-export default useFetchData;
+export default useDataFetch;
