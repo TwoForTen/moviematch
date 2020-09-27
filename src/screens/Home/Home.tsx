@@ -38,7 +38,7 @@ const Home = () => {
   const { genre } = useContext(GenreContext);
 
   const { loading, response } = useDataFetch(
-    'homeMovieList',
+    [genre.name, page],
     fetcher(page, genre.id)
   );
 
@@ -54,7 +54,7 @@ const Home = () => {
             movie: movies[movie].id,
           });
 
-        if (movie >= movies.length)
+        if (movie >= movies.length - 2)
           setPage((prev) => (prev < response.total_pages ? prev + 1 : prev));
         setMovie((prev) => (prev < movies.length - 1 ? prev + 1 : prev + 2));
       },

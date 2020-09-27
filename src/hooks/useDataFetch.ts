@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { isArray } from 'lodash';
 
 interface FetchData {
   loading: boolean;
   response: any;
 }
 
-const useDataFetch = (key: string, fetcher: Promise<any>): FetchData => {
+const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
   const [loading, setLoading] = useState<boolean>(true);
   const [response, setResponse] = useState<any>({ results: [] });
+
+  const dependencies = isArray(key) ? key : [key];
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;
@@ -25,7 +28,7 @@ const useDataFetch = (key: string, fetcher: Promise<any>): FetchData => {
     return () => {
       source.cancel();
     };
-  }, [key]);
+  }, [...dependencies]);
 
   return {
     loading,
