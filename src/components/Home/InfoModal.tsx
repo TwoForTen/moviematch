@@ -21,7 +21,6 @@ import useChangeMovieStatus, {
 } from '../../hooks/useChangeMovieStatus';
 import ReviewStars from '../ReviewStars';
 import { UserContext } from '../../context/UserProvider';
-import Trailer from 'src/screens/Home/Trailer';
 
 interface Props {
   data: any;
@@ -45,7 +44,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
     switchValuesState
   );
 
-  const { loading, response } = useFetchData({
+  const { response } = useFetchData({
     url: `/movie/${data.id}/videos`,
     method: 'get',
   });

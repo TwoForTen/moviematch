@@ -49,6 +49,9 @@ const Profile = () => {
     );
 
   useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+
     if (!!user.matchedWith)
       axios
         .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
@@ -59,6 +62,10 @@ const Profile = () => {
         .get(`http://192.168.1.6:3000/api/user?_id=${user.sentPairRequest}`)
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
+
+    return () => {
+      source.cancel();
+    };
   }, [user.sentPairRequest, user.matchedWith]);
 
   const deletePairRequest = useCallback(() => {
@@ -165,7 +172,11 @@ const Profile = () => {
           <AntDesign name="deleteuser" size={24} color={theme.danger} />
         </TouchableOpacity>
       }
-      helperText={`${pairedUser.matchedMovies.length} movies on Watchlist`}
+      helperText={`${
+        pairedUser.matchedMovies.filter((movie) =>
+          user.matchedMovies.includes(movie)
+        ).length
+      } matched movies`}
       onPress={() => {}}
     />
   );

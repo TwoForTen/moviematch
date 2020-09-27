@@ -1,11 +1,11 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { useEffect, useContext, useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-import theme from '../theme';
 import MovieList from '../screens/MovieList';
 import { ListType } from './ProfileNavigation';
+import { UserContext } from '../context/UserProvider';
+import { SocketContext } from '../context/SocketProvider';
 
 export type WatchlistStackParamList = {
   Watchlist: { movies: ListType };
@@ -13,20 +13,25 @@ export type WatchlistStackParamList = {
 
 const Stack = createStackNavigator<WatchlistStackParamList>();
 
-const PickGenre: React.FC = () => {
-  return (
-    <TouchableOpacity style={{ padding: 20 }}>
-      <AntDesign
-        style={{ transform: [{ rotate: '90deg' }] }}
-        name="swap"
-        size={24}
-        color={theme.black}
-      />
-    </TouchableOpacity>
-  );
-};
-
 const HomeNavigation = () => {
+  const { user } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
+  const navigation = useNavigation();
+  const [focused, setFocused] = useState<boolean>(true);
+
+  useEffect(() => {
+    navigation.addListener('focus', () => setFocused(true));
+    navigation.addListener('blur', () => setFocused(false));
+    if (user.matchedWith && user.matchedWith.notifications > 0) {
+      socket.emit('clearNotifications', user._id);
+    }
+
+    return () => {
+      navigation.removeListener('focus', () => setFocused(true));
+      navigation.removeListener('blur', () => setFocused(false));
+    };
+  }, [focused]);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -34,7 +39,6 @@ const HomeNavigation = () => {
         component={MovieList}
         options={{
           headerTitle: 'Watchlist',
-          headerRight: () => <PickGenre />,
         }}
         initialParams={{ movies: 'matchedMovies' }}
       />

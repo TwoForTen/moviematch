@@ -30,7 +30,9 @@ const PairRequests = () => {
       })
       .catch(() => setLoading(false));
 
-    return () => source.cancel();
+    return () => {
+      source.cancel();
+    };
   }, [user.receivedPairRequests]);
 
   if (isEmpty(user.receivedPairRequests))

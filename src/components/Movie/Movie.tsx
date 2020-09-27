@@ -47,7 +47,7 @@ const Movie: React.FC<Props> = ({ id, match }) => {
                 borderRadius: 100,
               }}
             >
-              <AntDesign name="heart" size={18} color={theme.danger} />
+              <AntDesign name="heart" size={17} color={theme.danger} />
             </View>
           )}
         </ImageBackground>
@@ -63,7 +63,7 @@ const Movie: React.FC<Props> = ({ id, match }) => {
           </Text>
           {!!match && (
             <Text
-              style={{ fontStyle: 'italic' }}
+              style={{ fontStyle: 'italic', fontSize: 13 }}
             >{`${match} also matched this movie`}</Text>
           )}
         </View>
@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 20,
-    // backgroundColor: 'white',
-    // marginBottom: 10,
   },
   image: {
     height: 200,
@@ -105,7 +103,6 @@ const styles = StyleSheet.create({
     width: 133.3,
     backgroundColor: theme.secondary,
     borderRadius: 10,
-    opacity: 0.7,
   },
   titlePh: {
     height: 15,

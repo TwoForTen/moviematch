@@ -1,10 +1,18 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
-import { View, FlatList, Text, StyleSheet, Switch, Button } from 'react-native';
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  Switch,
+  Button,
+  LayoutAnimation,
+} from 'react-native';
 import { isEmpty, sortBy } from 'lodash';
 import { AntDesign } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
-import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
 import useChangeMovieStatus, {
   SwitchName,
@@ -25,15 +33,15 @@ interface Props {
 const MovieList: React.FC<Props> = ({ route }) => {
   const { statusModal, setStatusModal } = useContext(StatusModalContext);
   const { user } = useContext(UserContext);
-  const navigation = useNavigation();
   const changeMovieStatus = useChangeMovieStatus();
   const {
     params: { movies },
   } = route;
-  const [refresh, setRefresh] = useState(false);
   const [pairedUser, setPairedUser] = useState<User>(initialUserState);
+  const [focused, setFocused] = useState<boolean>(true);
+  const navigation = useNavigation();
 
-  const memoizedUser = useMemo(() => user, [statusModal.isOpen, refresh]);
+  const memoizedUser = useMemo(() => user, [statusModal.isOpen, focused]);
 
   const switchValuesState: SwitchValues = {
     watchedMovies: user?.watchedMovies.includes(statusModal.movieId || ''),
@@ -65,29 +73,30 @@ const MovieList: React.FC<Props> = ({ route }) => {
   }, [statusModal.movieId]);
 
   useEffect(() => {
-    navigation.addListener('focus', () => setRefresh(true));
-    navigation.addListener('blur', () => setRefresh(false));
-
-    return () => {
-      navigation.removeListener('focus', () => setRefresh(true));
-      navigation.addListener('blur', () => setRefresh(false));
-    };
-  }, []);
-
-  useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
+
+    navigation.addListener('focus', () => setFocused(true));
+    navigation.addListener('blur', () => setFocused(false));
+
     if (user.matchedWith) {
       axios
         .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
-        .then(({ data }) => setPairedUser(data))
+        .then(({ data }) => {
+          setPairedUser(data);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        })
         .catch(() => {});
     } else {
       setPairedUser(initialUserState);
     }
 
-    return () => source.cancel();
-  }, [refresh]);
+    return () => {
+      source.cancel();
+      navigation.removeListener('focus', () => setFocused(true));
+      navigation.addListener('blur', () => setFocused(false));
+    };
+  }, []);
 
   if (isEmpty(memoizedUser[movies]))
     return <EmptyList icon="warning" message="List is empty" />;

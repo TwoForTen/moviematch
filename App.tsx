@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Platform, UIManager } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Splash from './src/screens/Splash';
@@ -9,6 +9,14 @@ import SocketProvider from './src/context/SocketProvider';
 import theme from './src/theme';
 
 export default function App() {
+  useEffect(() => {
+    if (
+      Platform.OS === 'android' &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
   return (
     <NavigationContainer>
       <UserProvider>

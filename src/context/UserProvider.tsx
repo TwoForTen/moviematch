@@ -9,6 +9,7 @@ export type User = {
   photoUrl: string;
   matchedWith: null | {
     matchId: string;
+    notifications: number;
     match: string;
   };
   sentPairRequest: string | null;

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { ActivityIndicator, View, StyleSheet, Image } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AppLoading } from 'expo';
 import axios from 'axios';
@@ -43,7 +43,7 @@ const Splash = () => {
 
       if (!!user.matchedWith) {
         socket.emit('joinMatch', user.matchedWith.matchId);
-        socket.on('matchedMovie', (movie: number) =>
+        socket.on('matchedMovie', (movie: number) => {
           axiosInstance
             .get(`/movie/${movie}`)
             .then(({ data }) =>
@@ -53,8 +53,8 @@ const Splash = () => {
                 movieTitle: data.title,
               })
             )
-            .catch(() => {})
-        );
+            .catch(() => {});
+        });
       }
     }
   }, [user._id, user.matchedWith?.matchId]);
