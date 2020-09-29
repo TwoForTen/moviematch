@@ -1,19 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
-  ImageBackground,
+  useWindowDimensions,
+  ScrollView,
+  Text,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import * as Google from 'expo-google-app-auth';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
+import theme from '../theme';
 import { UserContext } from '../context/UserProvider';
 
 const Login = () => {
   const { setUser } = useContext(UserContext);
+  const { width, height } = useWindowDimensions();
+
+  const [active, setActive] = useState<number>(0);
+
+  const onChange = ({
+    nativeEvent,
+  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const active = Math.floor(
+      nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width
+    );
+    setActive(active);
+  };
 
   const signIn = async () => {
     try {
@@ -56,19 +73,78 @@ const Login = () => {
   };
   return (
     <View style={styles.container}>
-      <ImageBackground
-        style={styles.bg}
-        blurRadius={1}
-        source={require('../../assets/loginBg.jpg')}
+      <View
+        style={{
+          height: height / 1.2,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingVertical: height / 13,
+        }}
       >
-        <View style={styles.backdrop} />
-        <TouchableOpacity activeOpacity={0.9} onPress={() => signIn()}>
+        <ScrollView
+          horizontal
+          snapToInterval={width}
+          scrollEventThrottle={200}
+          decelerationRate="fast"
+          onMomentumScrollEnd={onChange}
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View style={{ width }}>
+            <Image
+              style={{ width, height: width / 1.2, resizeMode: 'contain' }}
+              source={require('../../assets/first_slide.png')}
+            />
+            <Text style={styles.title}>Swipe Movies</Text>
+            <Text style={[styles.infoText, { paddingHorizontal: width / 10 }]}>
+              Swipe through trending movies and create your Watchlist.
+            </Text>
+          </View>
+          <View style={{ width }}>
+            <Image
+              style={{ width, height: width / 1.2, resizeMode: 'contain' }}
+              source={require('../../assets/second_slide.png')}
+            />
+            <Text style={styles.title}>Pair Up</Text>
+            <Text style={[styles.infoText, { paddingHorizontal: width / 10 }]}>
+              Pair up with another person and match movies to watch together.
+            </Text>
+          </View>
+        </ScrollView>
+        <View style={styles.indicatorsContainer}>
+          <View
+            style={[
+              styles.indicator,
+              {
+                backgroundColor: active === 0 ? theme.primary : theme.secondary,
+              },
+            ]}
+          />
+          <View
+            style={[
+              styles.indicator,
+              {
+                backgroundColor: active === 1 ? theme.primary : theme.secondary,
+              },
+            ]}
+          />
+        </View>
+      </View>
+      <TouchableOpacity activeOpacity={0.4} onPress={signIn}>
+        <View
+          style={[styles.rowAlign, { paddingVertical: 10, height: height / 5 }]}
+        >
           <Image
             source={require('../../assets/google.png')}
-            style={styles.image}
+            style={styles.loginBtn}
           />
-        </TouchableOpacity>
-      </ImageBackground>
+          <Text style={{ marginLeft: 10 }}>SIGN IN WITH GOOGLE</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -78,26 +154,37 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: theme.white,
   },
-  bg: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backdrop: {
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.9)',
-  },
-  buttonContainer: {
+  rowAlign: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  image: {
-    width: 240,
+  title: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  infoText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: theme.secondary,
+    marginTop: 5,
+  },
+  indicatorsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    backgroundColor: theme.primary,
+    borderRadius: 150,
+    marginHorizontal: 4,
+  },
+  loginBtn: {
+    width: 40,
     resizeMode: 'contain',
   },
 });
