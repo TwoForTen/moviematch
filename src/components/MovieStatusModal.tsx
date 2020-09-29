@@ -142,7 +142,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.08)',
   },
   watchedSection: {
     flexDirection: 'row',
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
     paddingTop: 13,
   },
   statusText: {
-    fontSize: 17,
+    fontSize: 16,
   },
 });
 

@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     marginHorizontal: 10,
-    borderBottomColor: 'rgba(0,0,100,0.07)',
+    borderBottomColor: 'rgba(0,0,0,0.08)',
     borderBottomWidth: 0.7,
   },
   text: {

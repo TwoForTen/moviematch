@@ -6,7 +6,6 @@ import {
   ScrollView,
   ImageBackground,
   TouchableOpacity,
-  Switch,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
@@ -48,7 +47,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
     switchValuesState
   );
 
-  const { response } = useDataFetch('trailer', fetcher(data.id));
+  const { response } = useDataFetch(data.id, fetcher(data.id));
 
   const onSwitchChange = async (
     value: boolean | undefined,
@@ -100,7 +99,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   .join(', ')}
               </Text>
 
-              <View style={styles.alignRow}>
+              <View style={styles.statusContainer}>
                 <View style={[styles.watchedSection, { marginRight: 15 }]}>
                   <TouchableOpacity
                     onPress={() =>
@@ -166,7 +165,7 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.overview}>
+              <View>
                 <Text style={styles.overviewTitle}>Synopsis:</Text>
                 <Text>{data.overview}</Text>
               </View>
@@ -252,9 +251,6 @@ const styles = StyleSheet.create({
   releaseDate: {
     // color: theme.secondary,
   },
-  overview: {
-    marginTop: 10,
-  },
   overviewTitle: {
     fontWeight: 'bold',
     lineHeight: 30,
@@ -288,14 +284,22 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 20,
   },
+  statusContainer: {
+    borderTopColor: 'rgba(0,0,0,0.08)',
+    borderTopWidth: 1,
+    marginVertical: 13,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   watchedSection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 13,
+    // paddingVertical: 13,
   },
   statusText: {
-    fontSize: 17,
+    fontSize: 16,
   },
   alignRow: {
     flexDirection: 'row',
