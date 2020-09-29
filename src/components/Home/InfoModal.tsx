@@ -22,6 +22,7 @@ import useChangeMovieStatus, {
 } from '../../hooks/useChangeMovieStatus';
 import ReviewStars from '../ReviewStars';
 import { UserContext } from '../../context/UserProvider';
+import genres from '../../utils/genres';
 
 interface Props {
   data: any;
@@ -50,14 +51,14 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   const { response } = useDataFetch('trailer', fetcher(data.id));
 
   const onSwitchChange = async (
-    switchValue: boolean,
-    switchName: SwitchName
+    value: boolean | undefined,
+    name: SwitchName
   ): Promise<void> => {
-    changeMovieStatus(switchValue, switchName, data.id);
+    changeMovieStatus(value, name, data.id);
     setSwitchValues((prev) => {
       return {
         ...prev,
-        [switchName]: !switchValues[switchName],
+        [name]: !switchValues[name],
       };
     });
   };
@@ -85,41 +86,85 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
           <TouchableOpacity activeOpacity={1}>
             <>
               <View style={styles.titleContainer}>
-                <Text style={styles.title}>{data.title}</Text>
+                <View>
+                  <Text style={styles.releaseDate}>
+                    {data.release_date.split('-')[0]}
+                  </Text>
+                  <Text style={styles.title}>{data.title}</Text>
+                </View>
                 <ReviewStars rating={data.vote_average} />
               </View>
-              <Text style={styles.releaseDate}>
-                {data.release_date.split('-')[0]}
+              <Text style={{ color: theme.secondary }}>
+                {data.genre_ids
+                  .map((genre: number) => genres[genre])
+                  .join(', ')}
               </Text>
-              <View style={styles.watchedSection}>
-                <View style={{ flexDirection: 'row' }}>
-                  <AntDesign name="check" size={24} color={theme.primary} />
-                  <Text style={styles.watchedText}>Already watched?</Text>
+
+              <View style={styles.alignRow}>
+                <View style={[styles.watchedSection, { marginRight: 15 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      onSwitchChange(
+                        !switchValues.watchedMovies,
+                        'watchedMovies'
+                      )
+                    }
+                  >
+                    <View style={styles.alignRow}>
+                      <AntDesign
+                        name="check"
+                        size={20}
+                        color={
+                          switchValues.watchedMovies ? theme.primary : 'gray'
+                        }
+                      />
+                      <Text
+                        style={[
+                          styles.statusText,
+                          {
+                            color: switchValues.watchedMovies
+                              ? theme.primary
+                              : 'gray',
+                          },
+                        ]}
+                      >
+                        Already watched?
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
-                <Switch
-                  trackColor={{ false: theme.secondary, true: theme.primary }}
-                  ios_backgroundColor={theme.secondary}
-                  thumbColor="#fefefe"
-                  value={switchValues['watchedMovies']}
-                  onValueChange={(value) =>
-                    onSwitchChange(value, 'watchedMovies')
-                  }
-                />
-              </View>
-              <View style={styles.watchedSection}>
-                <View style={{ flexDirection: 'row' }}>
-                  <AntDesign name="close" size={24} color={theme.danger} />
-                  <Text style={styles.ignoreText}>Ignore</Text>
+                <View style={styles.watchedSection}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      onSwitchChange(
+                        !switchValues.ignoredMovies,
+                        'ignoredMovies'
+                      )
+                    }
+                  >
+                    <View style={styles.alignRow}>
+                      <AntDesign
+                        name="close"
+                        size={20}
+                        color={
+                          switchValues.ignoredMovies ? theme.danger : 'gray'
+                        }
+                      />
+                      <Text
+                        style={[
+                          styles.statusText,
+                          {
+                            color: switchValues.ignoredMovies
+                              ? theme.danger
+                              : 'gray',
+                          },
+                        ]}
+                      >
+                        Ignore
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
-                <Switch
-                  trackColor={{ false: theme.secondary, true: theme.primary }}
-                  ios_backgroundColor={theme.secondary}
-                  thumbColor="#fefefe"
-                  value={switchValues['ignoredMovies']}
-                  onValueChange={(value) =>
-                    onSwitchChange(value, 'ignoredMovies')
-                  }
-                />
               </View>
               <View style={styles.overview}>
                 <Text style={styles.overviewTitle}>Synopsis:</Text>
@@ -202,10 +247,10 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     fontSize: 30,
+    lineHeight: 33,
   },
   releaseDate: {
-    color: theme.secondary,
-    marginTop: 1,
+    // color: theme.secondary,
   },
   overview: {
     marginTop: 10,
@@ -247,19 +292,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 13,
+    paddingVertical: 13,
   },
-  watchedText: {
-    fontSize: 16,
-    marginLeft: 5,
-    fontWeight: 'bold',
-    color: theme.primary,
+  statusText: {
+    fontSize: 17,
   },
-  ignoreText: {
-    fontSize: 16,
-    marginLeft: 5,
-    fontWeight: 'bold',
-    color: theme.danger,
+  alignRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

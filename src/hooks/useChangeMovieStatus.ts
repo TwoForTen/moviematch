@@ -15,18 +15,18 @@ const url: string = 'http://192.168.1.6:3000/api/user/movies';
 const useChangeMovieStatus = () => {
   const { user, setUser } = useContext(UserContext);
 
-  return async (switchValue: boolean, switchName: SwitchName, id: string) => {
+  return async (value: boolean | undefined, name: SwitchName, id: string) => {
     let result = null;
     try {
-      if (switchValue)
+      if (value)
         result = await axios.post(url, {
           _id: user._id,
-          [switchName]: id,
+          [name]: id,
         });
-      else if (!switchValue)
+      else if (!value)
         result = await axios.post(url + '/delete', {
           _id: user._id,
-          [switchName]: id,
+          [name]: id,
         });
       setUser(result?.data);
     } catch (err) {

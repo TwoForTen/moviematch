@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import ReviewStars from '../ReviewStars';
 import { AntDesign } from '@expo/vector-icons';
 import axiosInstance from '../../../axiosInstance';
@@ -19,6 +25,7 @@ const fetcher = (id: string) => axiosInstance.get(`/movie/${id}`);
 
 const Movie: React.FC<Props> = ({ id, match }) => {
   const { response, loading } = useDataFetch('movie', fetcher(id));
+  const { width } = useWindowDimensions();
 
   if (loading)
     return (
@@ -37,7 +44,7 @@ const Movie: React.FC<Props> = ({ id, match }) => {
     <View style={styles.container}>
       <View style={{ borderRadius: 10, overflow: 'hidden' }}>
         <ImageBackground
-          style={styles.image}
+          style={[styles.image, { width: width / 3, height: width / 2 }]}
           source={{ uri: imageUrl + response?.poster_path }}
         >
           {!!match && (
@@ -82,8 +89,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   image: {
-    height: 200,
-    width: 133.3,
     resizeMode: 'contain',
     borderRadius: 10,
   },
