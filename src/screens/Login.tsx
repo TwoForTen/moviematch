@@ -16,9 +16,11 @@ import axios from 'axios';
 
 import theme from '../theme';
 import { UserContext } from '../context/UserProvider';
+import { TokenContext } from '../context/TokenProvider';
 
 const Login = () => {
   const { setUser } = useContext(UserContext);
+  const { setToken } = useContext(TokenContext);
   const { width, height } = useWindowDimensions();
 
   const [active, setActive] = useState<number>(0);
@@ -51,6 +53,7 @@ const Login = () => {
           name,
           photoUrl,
         } = result.user;
+        setToken(id || '');
         await AsyncStorage.setItem('@token', id || '');
         await axios
           .post('http://192.168.1.6:3000/api/user', {

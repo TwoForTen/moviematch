@@ -9,6 +9,7 @@ import Login from './Login';
 import Routes from '../routes';
 import { UserContext, User } from '../context/UserProvider';
 import { SocketContext } from '../context/SocketProvider';
+import { TokenContext } from '../context/TokenProvider';
 import theme from '../theme';
 import Snackbar from '../components/Snackbar';
 
@@ -20,7 +21,7 @@ export interface SnackbarType {
 
 const Splash = () => {
   const [appReady, setAppReady] = useState<boolean>(false);
-  const [token, setToken] = useState<string>('');
+  const { token, setToken } = useContext(TokenContext);
   const [{ show, image, movieTitle }, setSnackbar] = useState<SnackbarType>({
     show: false,
     image: '',

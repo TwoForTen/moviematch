@@ -23,10 +23,12 @@ import {
   initialUserState,
 } from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
+import { TokenContext } from '../../context/TokenProvider';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
+  const { setToken } = useContext(TokenContext);
   const [pairedUser, setPairedUser] = useState<User>(initialUserState);
   const navigation = useNavigation();
 
@@ -259,9 +261,10 @@ const Profile = () => {
         <Button
           title="Logout"
           onPress={async () =>
-            await AsyncStorage.removeItem('@token').then(() =>
-              setUser(initialUserState)
-            )
+            await AsyncStorage.removeItem('@token').then(() => {
+              setToken('');
+              setUser(initialUserState);
+            })
           }
         />
       </View>

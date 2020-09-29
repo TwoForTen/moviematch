@@ -7,6 +7,7 @@ import UserProvider from './src/context/UserProvider';
 import StatusModalProvider from './src/context/StatusModalProvider';
 import SocketProvider from './src/context/SocketProvider';
 import GenreProvider from './src/context/GenreProvider';
+import TokenProvider from './src/context/TokenProvider';
 import theme from './src/theme';
 
 export default function App() {
@@ -20,17 +21,19 @@ export default function App() {
   }, []);
   return (
     <NavigationContainer>
-      <UserProvider>
-        <SocketProvider>
-          <StatusModalProvider>
-            <GenreProvider>
-              <View style={styles.container}>
-                <Splash />
-              </View>
-            </GenreProvider>
-          </StatusModalProvider>
-        </SocketProvider>
-      </UserProvider>
+      <TokenProvider>
+        <UserProvider>
+          <SocketProvider>
+            <StatusModalProvider>
+              <GenreProvider>
+                <View style={styles.container}>
+                  <Splash />
+                </View>
+              </GenreProvider>
+            </StatusModalProvider>
+          </SocketProvider>
+        </UserProvider>
+      </TokenProvider>
     </NavigationContainer>
   );
 }
