@@ -24,7 +24,11 @@ const BottomNavigation = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: theme.primary, showLabel: false }}
+      tabBarOptions={{
+        activeTintColor: theme.primary,
+        showLabel: false,
+        inactiveTintColor: theme.secondary,
+      }}
     >
       <Tab.Screen
         name="Home"

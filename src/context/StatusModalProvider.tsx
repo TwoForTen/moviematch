@@ -4,6 +4,7 @@ interface StatusModal {
   isOpen: boolean;
   movieId: null | string;
   title: string;
+  year: string;
 }
 
 interface StatusModalContextType {
@@ -12,7 +13,7 @@ interface StatusModalContextType {
 }
 
 export const StatusModalContext = createContext<StatusModalContextType>({
-  statusModal: { isOpen: false, movieId: null, title: '' },
+  statusModal: { isOpen: false, movieId: null, title: '', year: '' },
   setStatusModal: () => {},
 });
 
@@ -21,6 +22,7 @@ const StatusModalProvider: React.FC = ({ children }) => {
     isOpen: false,
     movieId: null,
     title: '',
+    year: '',
   });
   return (
     <StatusModalContext.Provider value={{ statusModal, setStatusModal }}>

@@ -77,7 +77,13 @@ const Movie: React.FC<Props> = ({ id, match }) => {
             >{`${match} also matched this movie`}</Text>
           )}
         </View>
-        {!!id && <Actions id={id} title={response?.title} />}
+        {!!id && (
+          <Actions
+            id={id}
+            title={response?.title}
+            year={response?.release_date.split('-')[0]}
+          />
+        )}
       </View>
     </View>
   );
