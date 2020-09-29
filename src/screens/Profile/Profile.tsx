@@ -13,6 +13,7 @@ import {
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import theme from '../../theme';
 import ProfileButton from '../../components/Profile/ProfileButton';
@@ -24,7 +25,7 @@ import {
 import { SocketContext } from '../../context/SocketProvider';
 
 const Profile = () => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
   const [pairedUser, setPairedUser] = useState<User>(initialUserState);
   const navigation = useNavigation();
@@ -255,7 +256,14 @@ const Profile = () => {
             </View>
           </View>
         </View>
-        <Button title="Logout" onPress={() => {}} />
+        <Button
+          title="Logout"
+          onPress={async () =>
+            await AsyncStorage.removeItem('@token').then(() =>
+              setUser(initialUserState)
+            )
+          }
+        />
       </View>
     </SafeAreaView>
   );
