@@ -71,6 +71,7 @@ const Login = () => {
         console.log('cancelled');
       }
     } catch (e) {
+      await AsyncStorage.removeItem('@token').then(() => setToken(''));
       console.log('error', e);
     }
   };
