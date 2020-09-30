@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, StatusBar } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  StatusBar,
+  Platform,
+} from 'react-native';
 import Modal from 'react-native-modal';
 
 import theme from '../theme';
@@ -53,7 +60,7 @@ const styles = StyleSheet.create({
   modal: {
     margin: 20,
     justifyContent: 'flex-start',
-    paddingTop: StatusBar.currentHeight,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 20,
   },
   content: {
     backgroundColor: theme.darkTransparent,

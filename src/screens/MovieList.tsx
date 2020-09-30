@@ -38,6 +38,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
+    let mounted: boolean = true;
 
     if (user.matchedWith) {
       axios
@@ -53,6 +54,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
 
     return () => {
       source.cancel();
+      mounted = false;
     };
   }, [user.matchedWith?.match, user.matchedMovies]);
 
