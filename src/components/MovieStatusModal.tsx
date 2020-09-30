@@ -10,10 +10,12 @@ import useChangeMovieStatus, {
 import theme from '../theme';
 import { StatusModalContext } from '../context/StatusModalProvider';
 import { UserContext } from '../context/UserProvider';
+import { SocketContext } from '../context/SocketProvider';
 
 const MovieStatusModal: React.FC = () => {
   const { statusModal, setStatusModal } = useContext(StatusModalContext);
   const { user } = useContext(UserContext);
+  const { socket } = useContext(SocketContext);
   const changeMovieStatus = useChangeMovieStatus();
 
   const switchValuesState: SwitchValues = {
@@ -116,7 +118,27 @@ const MovieStatusModal: React.FC = () => {
             </View>
           </View>
         </View>
-        <Button title="Add to Watchlist" onPress={() => {}} />
+        {user.matchedMovies.includes(statusModal.movieId || '') ? (
+          <Button
+            title="Remove From Watchlist"
+            onPress={() =>
+              socket.emit('removeFromWatchlist', {
+                senderId: user._id,
+                movie: statusModal.movieId,
+              })
+            }
+          />
+        ) : (
+          <Button
+            title="Add to Watchlist"
+            onPress={() =>
+              socket.emit('addToWatchlist', {
+                senderId: user._id,
+                movie: statusModal.movieId,
+              })
+            }
+          />
+        )}
       </View>
     </Modal>
   );

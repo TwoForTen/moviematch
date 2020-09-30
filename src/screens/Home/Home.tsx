@@ -22,10 +22,11 @@ import { GenreContext } from '../../context/GenreProvider';
 
 const imageUrl: string = 'https://image.tmdb.org/t/p/original';
 
-const fetcher = (page: number, genre: string) =>
-  axiosInstance.get(
-    `/discover/movie?page=${page}&with_genres=${genre !== '0' ? genre : ''}`
-  );
+const genreFetcher = (page: number, genre: string) =>
+  axiosInstance.get(`/discover/movie?page=${page}&with_genres=${genre}`);
+
+const trendingFetcher = (page: number) =>
+  axiosInstance.get(`/trending/movie/day?page=${page}`);
 
 const Home = () => {
   const [showModal, setShowModal] = useState<boolean>(true);
@@ -39,7 +40,7 @@ const Home = () => {
 
   const { loading, response } = useDataFetch(
     [genre.name, page],
-    fetcher(page, genre.id)
+    genre.id === '0' ? trendingFetcher(page) : genreFetcher(page, genre.id)
   );
 
   const handleSwipe = useCallback(
@@ -73,6 +74,7 @@ const Home = () => {
   }, [response.results]);
 
   useEffect(() => {
+    setPage(1);
     setMovie(movies.length);
   }, [genre]);
 

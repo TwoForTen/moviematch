@@ -7,6 +7,7 @@ import {
 import Profile from '../screens/Profile/Profile';
 import SearchUsers from '../screens/Profile/SearchUsers';
 import PairRequests from '../screens/Profile/PairRequests';
+import PairMovies from '../screens/Profile/PairMovies';
 import MovieList from '../screens/MovieList';
 
 export type ListType = 'watchedMovies' | 'ignoredMovies' | 'matchedMovies';
@@ -14,8 +15,9 @@ export type ListType = 'watchedMovies' | 'ignoredMovies' | 'matchedMovies';
 export type ProfileStackParamList = {
   Profile: undefined;
   MovieList: { movies: ListType; title: string };
-  SearchUsers: { title: string };
+  SearchUsers: undefined;
   PairRequests: undefined;
+  PairMovies: { title: string };
 };
 
 const Stack = createStackNavigator<ProfileStackParamList>();
@@ -40,12 +42,17 @@ const ProfileNavigation = () => {
       <Stack.Screen
         name="SearchUsers"
         component={SearchUsers}
-        options={({ route }) => ({ title: route.params.title })}
+        options={{ title: 'Search Users' }}
       />
       <Stack.Screen
         name="PairRequests"
         component={PairRequests}
         options={{ title: 'Pair Requests' }}
+      />
+      <Stack.Screen
+        name="PairMovies"
+        component={PairMovies}
+        options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>
   );

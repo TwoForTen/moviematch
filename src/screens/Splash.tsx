@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, memo } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AppLoading } from 'expo';
@@ -19,7 +19,7 @@ export interface SnackbarType {
   movieTitle: string;
 }
 
-const Splash = () => {
+const Splash = memo(() => {
   const [appReady, setAppReady] = useState<boolean>(false);
   const { token, setToken } = useContext(TokenContext);
   const [{ show, image, movieTitle }, setSnackbar] = useState<SnackbarType>({
@@ -117,6 +117,6 @@ const Splash = () => {
       )}
     </>
   );
-};
+});
 
 export default Splash;

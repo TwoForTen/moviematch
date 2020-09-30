@@ -1,8 +1,14 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from 'react';
 import { View, FlatList, StyleSheet, LayoutAnimation } from 'react-native';
 import { isEmpty, sortBy } from 'lodash';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import theme from '../theme';
 import { StatusModalContext } from '../context/StatusModalProvider';
@@ -33,9 +39,6 @@ const MovieList: React.FC<Props> = ({ route }) => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
 
-    navigation.addListener('focus', () => setFocused(true));
-    navigation.addListener('blur', () => setFocused(false));
-
     if (user.matchedWith) {
       axios
         .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
@@ -50,10 +53,15 @@ const MovieList: React.FC<Props> = ({ route }) => {
 
     return () => {
       source.cancel();
-      navigation.removeListener('focus', () => setFocused(true));
-      navigation.addListener('blur', () => setFocused(false));
     };
-  }, []);
+  }, [user.matchedWith?.match, user.matchedMovies]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setFocused(true);
+      return () => setFocused(false);
+    }, [navigation])
+  );
 
   if (isEmpty(memoizedUser[movies]))
     return <EmptyList icon="warning" message="List is empty" />;

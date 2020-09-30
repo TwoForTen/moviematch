@@ -10,23 +10,29 @@ interface FetchData {
 const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
   const [loading, setLoading] = useState<boolean>(true);
   const [response, setResponse] = useState<any>({ results: [] });
+  let isMounted: boolean = true;
 
   const dependencies = isArray(key) ? key : [key];
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
-    fetcher
-      .then((data: any) => {
-        setResponse(data.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    const fetchData = async () =>
+      await fetcher
+        .then((data: any) => {
+          setResponse(data.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+    fetchData();
 
     return () => {
       source.cancel();
+      isMounted = false;
     };
   }, [...dependencies]);
 

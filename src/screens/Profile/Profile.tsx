@@ -98,7 +98,6 @@ const Profile = () => {
       helperText={` is your Pairing ID`}
       onPress={() => {
         navigation.navigate('SearchUsers', {
-          title: 'Find User',
           _id: user._id,
         });
       }}
@@ -180,7 +179,11 @@ const Profile = () => {
           user.matchedMovies.includes(movie)
         ).length
       } matched movies`}
-      onPress={() => {}}
+      onPress={() =>
+        navigation.navigate('PairMovies', {
+          title: `${pairedUser.givenName}'s Watchlist`,
+        })
+      }
     />
   );
 
