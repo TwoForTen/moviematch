@@ -18,7 +18,8 @@ const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
     const source = CancelToken.source();
     let isMounted: boolean = true;
 
-    const fetchData = async () =>
+    const fetchData = async () => {
+      setLoading(true);
       await fetcher
         .then((data: any) => {
           setResponse(data.data);
@@ -27,6 +28,7 @@ const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
         .catch((err) => {
           console.log(err);
         });
+    };
 
     fetchData();
 

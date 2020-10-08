@@ -6,12 +6,13 @@ import { debounce } from 'lodash';
 
 import { UserContext } from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
+import runSpring from '../../utils/springAnimation';
+import theme from '../../theme';
 
 interface Props {
   movie: any;
   index: number;
-  active: number;
-  setActive: React.Dispatch<React.SetStateAction<number>>;
+  setMovies: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const {
@@ -26,9 +27,7 @@ const {
   set,
   call,
   clockRunning,
-  startClock,
   Clock,
-  spring,
   stopClock,
   lessThan,
   neq,
@@ -37,60 +36,10 @@ const {
 const { width } = Dimensions.get('screen');
 
 const IMAGE_URL: string = 'https://image.tmdb.org/t/p/w500';
-const CARD_WIDTH: number = width * 0.74;
+const CARD_WIDTH: number = width * 0.72;
 const CARD_HEIGHT: number = CARD_WIDTH * 1.7;
 
-function runSpring(
-  clock: Animated.Clock,
-  value: Animated.Node<number>,
-  velocity: Animated.Node<number>,
-  dest: Animated.Node<number>
-) {
-  const state = {
-    finished: new Value(0),
-    velocity: new Value(0),
-    position: new Value(0),
-    time: new Value(0),
-  };
-
-  const config = {
-    damping: 7,
-    mass: 1,
-    stiffness: 121.6,
-    overshootClamping: new Value(0),
-    restSpeedThreshold: new Value(0.001),
-    restDisplacementThreshold: new Value(0.001),
-    toValue: new Value(0),
-  };
-
-  return [
-    cond(clockRunning(clock), 0, [
-      set(state.finished, 0),
-      set(state.velocity, velocity),
-      set(state.position, value),
-      set(config.toValue, dest),
-      cond(
-        eq(config.toValue, 0),
-        [
-          set(config.overshootClamping, 0),
-          set(config.restSpeedThreshold, 0.01),
-          set(config.restDisplacementThreshold, 0.01),
-        ],
-        [
-          set(config.overshootClamping, 1),
-          set(config.restSpeedThreshold, 200),
-          set(config.restDisplacementThreshold, 200),
-        ]
-      ),
-      startClock(clock),
-    ]),
-    spring(clock, state, config),
-    cond(state.finished, stopClock(clock)),
-    state.position,
-  ];
-}
-
-const MovieCards: React.FC<Props> = ({ movie, index, active, setActive }) => {
+const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
   const translateX = useRef(new Value(0)).current;
   const translateY = useRef(new Value(0)).current;
   const velocityX = useRef(new Value(0)).current;
@@ -122,7 +71,9 @@ const MovieCards: React.FC<Props> = ({ movie, index, active, setActive }) => {
             movie: movie.id,
           });
         }
-        setActive((prev) => prev + 1);
+        setMovies((movies: any) =>
+          movies.filter((item: any) => item.id !== movie.id)
+        );
       },
       2000,
       { leading: true, trailing: false }
@@ -167,7 +118,6 @@ const MovieCards: React.FC<Props> = ({ movie, index, active, setActive }) => {
   }, [translateX]);
   return (
     <PanGestureHandler
-      //   enabled={active === index}
       maxPointers={1}
       onGestureEvent={onGestureHandler}
       onHandlerStateChange={onGestureHandler}
@@ -179,6 +129,7 @@ const MovieCards: React.FC<Props> = ({ movie, index, active, setActive }) => {
         ]}
       >
         <Animated.Image
+          fadeDuration={0}
           style={styles.image}
           source={{ uri: IMAGE_URL + movie.poster_path }}
         />
@@ -190,13 +141,14 @@ const MovieCards: React.FC<Props> = ({ movie, index, active, setActive }) => {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
+    paddingTop: 20,
     alignItems: 'center',
   },
   image: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: 10,
+    backgroundColor: theme.secondary,
   },
 });
 

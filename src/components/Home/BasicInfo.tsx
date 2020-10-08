@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -71,6 +71,10 @@ const MovieInfo: React.FC<MovieInfoProps> = ({ movie }) => {
       };
     });
   };
+
+  useEffect(() => {
+    setSwitchValues(switchValuesState);
+  }, [movie]);
 
   return (
     <View style={{ height: height * 0.16 }}>
