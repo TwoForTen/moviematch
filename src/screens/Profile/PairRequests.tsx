@@ -18,7 +18,7 @@ const PairRequests = () => {
     const source = CancelToken.source();
     axios
       .post(
-        `http://192.168.1.6:3000/api/user/requests`,
+        `https://moviematch-server.herokuapp.com/api/user/requests`,
         {
           _ids: user.receivedPairRequests,
         },

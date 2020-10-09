@@ -31,7 +31,7 @@ const MovieList: React.FC = () => {
 
     if (user.matchedWith) {
       axios
-        .get(`http://192.168.1.6:3000/api/user?_id=${user.matchedWith.match}`)
+        .get(`https://moviematch-server.herokuapp.com/api/user?_id=${user.matchedWith.match}`)
         .then(({ data }) => {
           setPairedUser(data);
           setLoading(false);

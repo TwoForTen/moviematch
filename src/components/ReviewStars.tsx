@@ -114,7 +114,7 @@ const ReviewStars: React.FC<Props> = ({ rating }) => {
   };
 
   return (
-    <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+    <View style={{ flexDirection: 'row' }}>
       {renderedRatings()}
     </View>
   );

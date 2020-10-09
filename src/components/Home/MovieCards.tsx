@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 
 import { UserContext } from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
-import runSpring from '../../utils/springAnimation';
+import SpringAnimation from '../../utils/springAnimation';
 import theme from '../../theme';
 
 interface Props {
@@ -100,7 +100,7 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
         translateX,
       ]),
       cond(eq(gestureState, State.END), [
-        set(translateX, runSpring(clockX, translateX, velocityX, snapPoint)),
+        set(translateX, new SpringAnimation(clockX, translateX, velocityX, snapPoint).runSpring(1, 200,200)),
         cond(
           and(eq(clockRunning(clockX), 0), neq(translateX, 0)),
           call([translateX], onSwiped)
@@ -110,12 +110,12 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
       cond(eq(gestureState, State.END), [
         set(
           translateY,
-          runSpring(clockY, translateY, new Value(0), new Value(0))
+          new SpringAnimation(clockY, translateY, new Value(0), new Value(0)).runSpring(1, 200, 200)
         ),
         translateY,
       ]),
     ]);
-  }, [translateX]);
+  }, []);
   return (
     <PanGestureHandler
       maxPointers={1}

@@ -19,7 +19,6 @@ const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
     let isMounted: boolean = true;
 
     const fetchData = async () => {
-      setLoading(true);
       await fetcher
         .then((data: any) => {
           setResponse(data.data);

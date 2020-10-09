@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { isEmpty } from 'lodash';
 import axiosInstance from '../../../axiosInstance';
@@ -12,7 +12,6 @@ import { UserContext } from '../../context/UserProvider';
 import { GenreContext } from '../../context/GenreProvider';
 
 import MovieCards from '../../components/Home/MovieCards';
-import runSpring from '../../utils/springAnimation';
 
 const genreFetcher = (page: number, genre: string) =>
   axiosInstance.get(`/discover/movie?page=${page}&with_genres=${genre}`);
@@ -23,19 +22,19 @@ const trendingFetcher = (page: number) =>
 const Home = () => {
   const [showModal, setShowModal] = useState<boolean>(true);
   const [movies, setMovies] = useState<any[]>([]);
-  const scrollXAnimated = new Animated.Value(0);
   const [page, setPage] = useState(1);
   const { user } = useContext(UserContext);
   const { genre } = useContext(GenreContext);
 
   const { loading, response } = useDataFetch(
-    [genre.name, page],
+    [genre.id, page],
     genre.id === '0' ? trendingFetcher(page) : genreFetcher(page, genre.id)
   );
 
-  const reversedMovies = useMemo(() => [...movies].reverse(), [movies]);
+  const reversedMovieList = useMemo(() => [...movies].reverse(), [movies]);
   useEffect(() => {
-    setMovies([
+    setMovies((prev) => [
+      ...prev,
       ...response.results
         .filter((item: any) => !user.ignoredMovies.includes(item.id))
         .filter((item: any) => !user.matchedMovies.includes(item.id)),
@@ -43,16 +42,14 @@ const Home = () => {
   }, [response.results]);
 
   useEffect(() => {
+    setMovies([]);
     setPage(1);
   }, [genre]);
 
   useEffect(() => {
-    if (isEmpty(movies))
+    if (movies.length <= 4)
       setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
-
-    if (movies.length === 0)
-      setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
-  }, [movies]);
+  }, [movies, response.results, response.total_pages]);
 
   if (loading || isEmpty(movies))
     return (
@@ -65,7 +62,7 @@ const Home = () => {
 
   return (
     <View style={{ justifyContent: 'flex-end', flex: 1 }}>
-      {reversedMovies.map((movie, index) => {
+      {reversedMovieList.map((movie, index) => {
         return (
           <MovieCards
             index={index}
@@ -75,7 +72,7 @@ const Home = () => {
           />
         );
       })}
-      <BasicInfo scrollXAnimated={scrollXAnimated} movies={movies} />
+      <BasicInfo movie={movies[0]} />
     </View>
   );
 };

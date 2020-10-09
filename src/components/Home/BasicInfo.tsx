@@ -7,7 +7,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import Animated from 'react-native-reanimated';
 
 import theme from '../../theme';
 import { UserContext } from '../../context/UserProvider';
@@ -20,28 +19,13 @@ import genres from '../../utils/genres';
 const { height } = Dimensions.get('screen');
 
 interface Props {
-  movies: any[];
-  scrollXAnimated: Animated.Value<number>;
+  movie: any;
 }
 
-const OVERFLOW_HEIGHT: number = height * 0.16;
+export const OVERFLOW_HEIGHT: number = height * 0.16;
 
-const BasicInfo: React.FC<Props> = ({ movies, scrollXAnimated }) => {
-  const inputRange = [-1, 0, 1];
-  const translateY = scrollXAnimated.interpolate({
-    inputRange,
-    outputRange: [OVERFLOW_HEIGHT, 0, -OVERFLOW_HEIGHT],
-  });
-
-  return (
-    <View style={styles.overflowContainer}>
-      <Animated.View style={{ transform: [{ translateY }] }}>
-        {movies.map((movie: any, index: number) => {
-          return <MovieInfo movie={movie} key={index} />;
-        })}
-      </Animated.View>
-    </View>
-  );
+const BasicInfo: React.FC<Props> = ({ movie}) => {
+return <View style={{paddingHorizontal: 20}}><MovieInfo movie={movie} /></View>
 };
 
 interface MovieInfoProps {
@@ -172,7 +156,6 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(0,0,0,0.08)',
     borderTopWidth: 1,
     marginVertical: 13,
-    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -180,10 +163,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingVertical: 13,
   },
   statusText: {
     fontSize: 16,
+    paddingVertical: 10
   },
   alignRow: {
     flexDirection: 'row',

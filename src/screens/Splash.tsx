@@ -66,7 +66,7 @@ const Splash = memo(() => {
       if (!!storedToken) {
         setToken(storedToken);
         axios
-          .get(`http://192.168.1.6:3000/api/user?_id=${storedToken}`)
+          .get(`https://moviematch-server.herokuapp.com/api/user?_id=${storedToken}`)
           .then(({ data }) => {
             if (!data) {
               setToken('');

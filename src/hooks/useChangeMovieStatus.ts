@@ -10,7 +10,7 @@ export interface SwitchValues {
 
 export type SwitchName = keyof SwitchValues;
 
-const url: string = 'http://192.168.1.6:3000/api/user/movies';
+const url: string = 'https://moviematch-server.herokuapp.com/api/user/movies';
 
 const useChangeMovieStatus = () => {
   const { user, setUser } = useContext(UserContext);
