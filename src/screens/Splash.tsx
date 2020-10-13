@@ -34,11 +34,11 @@ const Splash = memo(() => {
     if (!!user._id) {
       socket.connect();
       socket.emit('clientJoined', user._id);
-      socket.addEventListener('connect', () => {
-        socket.emit('clientJoined', user._id);
-        if (!!user.matchedWith)
-          socket.emit('joinMatch', user.matchedWith.matchId);
-      });
+      // socket.addEventListener('connect', () => {
+      //   socket.emit('clientJoined', user._id);
+      //   if (!!user.matchedWith)
+      //     socket.emit('joinMatch', user.matchedWith.matchId);
+      // });
       socket.on('userStateUpdate', (user: User) => {
         setUser(user);
       });

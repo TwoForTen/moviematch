@@ -268,8 +268,8 @@ const Profile = () => {
         <Button
           title="Logout"
           onPress={async () => {
+            socket.emit('userDisconnect', user._id);
             await AsyncStorage.removeItem('@token').then(() => {
-              socket.emit('userDisconnect', user._id);
               socket.disconnect();
               setToken('');
               setUser(initialUserState);
