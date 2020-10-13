@@ -57,12 +57,16 @@ const Profile = () => {
 
     if (!!user.matchedWith)
       axios
-        .get(`https://moviematch-server.herokuapp.com/api/user?_id=${user.matchedWith.match}`)
+        .get(
+          `https://moviematch-server.herokuapp.com/api/user?_id=${user.matchedWith.match}`
+        )
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
     else if (!!user.sentPairRequest)
       axios
-        .get(`https://moviematch-server.herokuapp.com/api/user?_id=${user.sentPairRequest}`)
+        .get(
+          `https://moviematch-server.herokuapp.com/api/user?_id=${user.sentPairRequest}`
+        )
         .then(({ data }) => setPairedUser(data))
         .catch(() => {});
 
@@ -265,7 +269,6 @@ const Profile = () => {
           title="Logout"
           onPress={async () =>
             await AsyncStorage.removeItem('@token').then(() => {
-              socket.disconnect();
               setToken('');
               setUser(initialUserState);
             })

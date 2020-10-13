@@ -41,7 +41,8 @@ const Login = () => {
           '1099080056337-4b5bgl821i3a05d3sjubbtdugnkjajda.apps.googleusercontent.com',
         androidClientId:
           '1099080056337-1rocgm0jmdq8qclu6tsnclbqsej9uob1.apps.googleusercontent.com',
-          androidStandaloneAppClientId: '1099080056337-89cg8b4ao5q7rqsqavmi7t86c599o2mb.apps.googleusercontent.com',
+        androidStandaloneAppClientId:
+          '1099080056337-89cg8b4ao5q7rqsqavmi7t86c599o2mb.apps.googleusercontent.com',
         scopes: ['profile', 'email'],
       });
 
