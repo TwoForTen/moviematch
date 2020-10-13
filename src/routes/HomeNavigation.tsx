@@ -11,12 +11,14 @@ import theme from '../theme';
 import Home from '../screens/Home/Home';
 import Trailer from '../screens/Home/Trailer';
 import Settings from '../screens/Home/Settings';
+import MovieInfo from '../screens/Home/MovieInfo';
 import { GenreContext } from '../context/GenreProvider';
 
 export type RootStackParamList = {
   Home: undefined;
   Trailer: { id: string };
   Settings: undefined;
+  MovieInfo: { movie: any };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -53,6 +55,13 @@ const HomeNavigation = () => {
         options={{
           headerTitle: 'Genres',
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name="MovieInfo"
+        component={MovieInfo}
+        options={{
+          header: () => null,
         }}
       />
     </Stack.Navigator>

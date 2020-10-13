@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { isEmpty } from 'lodash';
 import axiosInstance from '../../../axiosInstance';
-import Animated, { useCode } from 'react-native-reanimated';
 
 import useDataFetch from '../../hooks/useDataFetch';
-import InfoModal from '../../components/Home/InfoModal';
 import BasicInfo from '../../components/Home/BasicInfo';
 import theme from '../../theme';
 import { UserContext } from '../../context/UserProvider';

@@ -1,8 +1,13 @@
 import React, { useContext, useRef, useCallback } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import {
+  PanGestureHandler,
+  State,
+  TapGestureHandler,
+} from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { debounce } from 'lodash';
+import { useNavigation } from '@react-navigation/native';
 
 import { UserContext } from '../../context/UserProvider';
 import { SocketContext } from '../../context/SocketProvider';
@@ -44,6 +49,8 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
   const translateY = useRef(new Value(0)).current;
   const velocityX = useRef(new Value(0)).current;
   const gestureState = useRef(new Value(State.UNDETERMINED)).current;
+
+  const navigation = useNavigation();
 
   const { user } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
@@ -145,24 +152,33 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
     ]);
   }, []);
   return (
-    <PanGestureHandler
-      maxPointers={1}
-      onGestureEvent={onGestureHandler}
-      onHandlerStateChange={onGestureHandler}
+    <TapGestureHandler
+      maxDurationMs={2000}
+      maxDelayMs={2000}
+      onHandlerStateChange={({ nativeEvent }) => {
+        if (nativeEvent.state === State.END) {
+          navigation.navigate('MovieInfo', { movie });
+        }
+      }}
     >
-      <Animated.View
-        style={[
-          styles.container,
-          { transform: [{ translateX }, { translateY }] },
-        ]}
-      >
-        <Animated.Image
-          fadeDuration={0}
-          style={styles.image}
-          source={{ uri: IMAGE_URL + movie.poster_path }}
-        />
+      <Animated.View style={styles.container}>
+        <PanGestureHandler
+          maxPointers={1}
+          onGestureEvent={onGestureHandler}
+          onHandlerStateChange={onGestureHandler}
+        >
+          <Animated.View
+            style={[{ transform: [{ translateX }, { translateY }] }]}
+          >
+            <Animated.Image
+              fadeDuration={0}
+              style={styles.image}
+              source={{ uri: IMAGE_URL + movie.poster_path }}
+            />
+          </Animated.View>
+        </PanGestureHandler>
       </Animated.View>
-    </PanGestureHandler>
+    </TapGestureHandler>
   );
 };
 
