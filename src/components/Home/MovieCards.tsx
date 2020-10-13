@@ -48,6 +48,21 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
   const { user } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
 
+  const styles = StyleSheet.create({
+    container: {
+      ...StyleSheet.absoluteFillObject,
+      paddingTop: 20,
+      alignItems: 'center',
+      zIndex: -index,
+    },
+    image: {
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
+      borderRadius: 10,
+      backgroundColor: theme.secondary,
+    },
+  });
+
   const onGestureHandler = event(
     [
       {
@@ -100,7 +115,15 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
         translateX,
       ]),
       cond(eq(gestureState, State.END), [
-        set(translateX, new SpringAnimation(clockX, translateX, velocityX, snapPoint).runSpring(1, 200,200)),
+        set(
+          translateX,
+          new SpringAnimation(
+            clockX,
+            translateX,
+            velocityX,
+            snapPoint
+          ).runSpring(1, 200, 200)
+        ),
         cond(
           and(eq(clockRunning(clockX), 0), neq(translateX, 0)),
           call([translateX], onSwiped)
@@ -110,7 +133,12 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
       cond(eq(gestureState, State.END), [
         set(
           translateY,
-          new SpringAnimation(clockY, translateY, new Value(0), new Value(0)).runSpring(1, 200, 200)
+          new SpringAnimation(
+            clockY,
+            translateY,
+            new Value(0),
+            new Value(0)
+          ).runSpring(1, 200, 200)
         ),
         translateY,
       ]),
@@ -137,19 +165,5 @@ const MovieCards: React.FC<Props> = ({ movie, index, setMovies }) => {
     </PanGestureHandler>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    paddingTop: 20,
-    alignItems: 'center',
-  },
-  image: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
-    borderRadius: 10,
-    backgroundColor: theme.secondary,
-  },
-});
 
 export default MovieCards;

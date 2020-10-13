@@ -31,7 +31,6 @@ const Home = () => {
     genre.id === '0' ? trendingFetcher(page) : genreFetcher(page, genre.id)
   );
 
-  const reversedMovieList = useMemo(() => [...movies].reverse(), [movies]);
   useEffect(() => {
     setMovies((prev) => [
       ...prev,
@@ -49,7 +48,7 @@ const Home = () => {
   useEffect(() => {
     if (movies.length <= 4)
       setPage((prev) => (prev < response?.total_pages ? prev + 1 : prev));
-  }, [movies, response.results, response.total_pages]);
+  }, [movies, response.total_pages]);
 
   if (loading || isEmpty(movies))
     return (
@@ -62,14 +61,16 @@ const Home = () => {
 
   return (
     <View style={{ justifyContent: 'flex-end', flex: 1 }}>
-      {reversedMovieList.map((movie, index) => {
+      {movies.map((movie, index) => {
         return (
-          <MovieCards
-            index={index}
-            setMovies={setMovies}
-            movie={movie}
-            key={movie.id}
-          />
+          index < 6 && (
+            <MovieCards
+              index={index}
+              setMovies={setMovies}
+              movie={movie}
+              key={movie.id}
+            />
+          )
         );
       })}
       <BasicInfo movie={movies[0]} />
