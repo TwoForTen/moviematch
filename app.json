@@ -23,7 +23,9 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
-      "package": "com.twoforten.moviematch"
+      "package": "com.twoforten.moviematch",
+      "versionCode": 1
+
     }
   }
 }

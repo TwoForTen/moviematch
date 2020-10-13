@@ -29,7 +29,7 @@ const useDataFetch = (key: any, fetcher: Promise<any>): FetchData => {
         });
     };
 
-    fetchData();
+    if(isMounted) fetchData();
 
     return () => {
       source.cancel();
