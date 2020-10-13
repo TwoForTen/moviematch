@@ -24,8 +24,12 @@ interface Props {
 
 export const OVERFLOW_HEIGHT: number = height * 0.16;
 
-const BasicInfo: React.FC<Props> = ({ movie}) => {
-return <View style={{paddingHorizontal: 20}}><MovieInfo movie={movie} /></View>
+const BasicInfo: React.FC<Props> = ({ movie }) => {
+  return (
+    <View style={{ paddingHorizontal: 20 }}>
+      <MovieInfo movie={movie} />
+    </View>
+  );
 };
 
 interface MovieInfoProps {
@@ -58,7 +62,7 @@ const MovieInfo: React.FC<MovieInfoProps> = ({ movie }) => {
 
   useEffect(() => {
     setSwitchValues(switchValuesState);
-  }, [movie]);
+  }, [movie, user.watchedMovies, user.ignoredMovies]);
 
   return (
     <View style={{ height: height * 0.16 }}>
@@ -166,7 +170,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 16,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   alignRow: {
     flexDirection: 'row',

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../routes/HomeNavigation';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import {
   Directions,
   FlingGestureHandler,
   State,
 } from 'react-native-gesture-handler';
 
+import { RootStackParamList } from '../../routes/HomeNavigation';
 import InfoModal from '../../components/Home/InfoModal';
 
 type MovieInfoScreenRouteProp = RouteProp<RootStackParamList, 'MovieInfo'>;
@@ -23,6 +23,7 @@ const MovieInfo: React.FC<Props> = ({ route }) => {
     params: { movie },
   } = route;
   const [showModal, setShowModal] = useState<boolean>(true);
+  const navigation = useNavigation();
 
   return (
     <FlingGestureHandler
@@ -34,11 +35,17 @@ const MovieInfo: React.FC<Props> = ({ route }) => {
       }}
     >
       <View style={{ flex: 1 }}>
-        <Image
-          fadeDuration={0}
-          style={styles.image}
-          source={{ uri: IMAGE_URL + movie.poster_path }}
-        />
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          activeOpacity={1}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Image
+            fadeDuration={0}
+            style={styles.image}
+            source={{ uri: IMAGE_URL + movie.poster_path }}
+          />
+        </TouchableOpacity>
         <InfoModal
           data={movie}
           showModal={showModal}

@@ -267,12 +267,14 @@ const Profile = () => {
         </View>
         <Button
           title="Logout"
-          onPress={async () =>
+          onPress={async () => {
             await AsyncStorage.removeItem('@token').then(() => {
+              socket.emit('userDisconnect', user._id);
+              socket.disconnect();
               setToken('');
               setUser(initialUserState);
-            })
-          }
+            });
+          }}
         />
       </View>
     </SafeAreaView>

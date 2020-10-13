@@ -31,7 +31,9 @@ const SearchUsers: React.FC = () => {
       setLoading(true);
       if (text.length > 0)
         axios
-          .get(`https://moviematch-server.herokuapp.com/api/users/pair?q=${text}&_id=${_id}`)
+          .get(
+            `https://moviematch-server.herokuapp.com/api/users/pair?q=${text}&_id=${_id}`
+          )
           .then(({ data }) => {
             setUsers(data);
             setLoading(false);

@@ -62,6 +62,8 @@ const HomeNavigation = () => {
         component={MovieInfo}
         options={{
           header: () => null,
+          cardStyleInterpolator:
+            CardStyleInterpolators.forScaleFromCenterAndroid,
         }}
       />
     </Stack.Navigator>
