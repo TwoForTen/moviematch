@@ -5,11 +5,13 @@ import {
   ImageBackground,
   StyleSheet,
   useWindowDimensions,
+  TouchableOpacity,
 } from 'react-native';
-import ReviewStars from '../ReviewStars';
 import { AntDesign } from '@expo/vector-icons';
-import axiosInstance from '../../../axiosInstance';
+import { useNavigation } from '@react-navigation/native';
 
+import ReviewStars from '../ReviewStars';
+import axiosInstance from '../../../axiosInstance';
 import useDataFetch from '../../hooks/useDataFetch';
 import theme from '../../theme';
 import Actions from './Actions';
@@ -26,6 +28,7 @@ const fetcher = (id: string) => axiosInstance.get(`/movie/${id}`);
 const Movie: React.FC<Props> = ({ id, match }) => {
   const { response, loading } = useDataFetch('movie', fetcher(id));
   const { width } = useWindowDimensions();
+  const navigation = useNavigation();
 
   if (loading)
     return (
@@ -43,24 +46,28 @@ const Movie: React.FC<Props> = ({ id, match }) => {
   return (
     <View style={styles.container}>
       <View style={{ borderRadius: 10, overflow: 'hidden' }}>
-        <ImageBackground
-          style={[styles.image, { width: width / 3, height: width / 2 }]}
-          source={{ uri: imageUrl + response?.poster_path }}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MovieInfo', { movie: response })}
         >
-          {!!match && (
-            <View
-              style={{
-                backgroundColor: theme.background,
-                alignSelf: 'flex-start',
-                margin: -5.5,
-                padding: 6,
-                borderRadius: 100,
-              }}
-            >
-              <AntDesign name="heart" size={17} color={theme.danger} />
-            </View>
-          )}
-        </ImageBackground>
+          <ImageBackground
+            style={[styles.image, { width: width / 3, height: width / 2 }]}
+            source={{ uri: imageUrl + response?.poster_path }}
+          >
+            {!!match && (
+              <View
+                style={{
+                  backgroundColor: theme.background,
+                  alignSelf: 'flex-start',
+                  margin: -5.5,
+                  padding: 6,
+                  borderRadius: 100,
+                }}
+              >
+                <AntDesign name="heart" size={17} color={theme.danger} />
+              </View>
+            )}
+          </ImageBackground>
+        </TouchableOpacity>
       </View>
       <View style={styles.infoContainer}>
         <View>

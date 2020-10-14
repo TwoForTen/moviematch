@@ -71,6 +71,9 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
   return (
     <Modal
       onSwipeComplete={() => setShowModal(false)}
+      // useNativeDriver
+      hardwareAccelerated
+      hideModalContentWhileAnimating
       style={styles.modal}
       isVisible={showModal}
       hasBackdrop={false}
@@ -95,8 +98,12 @@ const InfoModal: React.FC<Props> = ({ data, showModal, setShowModal }) => {
               </View>
               <Text style={{ color: theme.secondary }}>
                 {data.genre_ids
-                  .map((genre: number) => genres[genre])
-                  .join(', ')}
+                  ? data?.genre_ids
+                      .map((genre: number) => genres[genre])
+                      .join(', ')
+                  : data?.genres
+                      ?.map((genre: { name: string }) => genre.name)
+                      .join(', ')}
               </Text>
 
               <View style={styles.statusContainer}>

@@ -1,14 +1,19 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import MovieList from '../screens/MovieList';
+import MovieInfo from '../screens/Home/MovieInfo';
 import { ListType } from './ProfileNavigation';
 import { UserContext } from '../context/UserProvider';
 import { SocketContext } from '../context/SocketProvider';
 
 export type WatchlistStackParamList = {
   Watchlist: { movies: ListType };
+  MovieInfo: { movie: any };
 };
 
 const Stack = createStackNavigator<WatchlistStackParamList>();
@@ -41,6 +46,15 @@ const HomeNavigation = () => {
           headerTitle: 'Watchlist',
         }}
         initialParams={{ movies: 'matchedMovies' }}
+      />
+      <Stack.Screen
+        name="MovieInfo"
+        component={MovieInfo}
+        options={{
+          header: () => null,
+          cardStyleInterpolator:
+            CardStyleInterpolators.forScaleFromCenterAndroid,
+        }}
       />
     </Stack.Navigator>
   );

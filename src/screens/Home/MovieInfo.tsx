@@ -38,7 +38,7 @@ const MovieInfo: React.FC<Props> = ({ route }) => {
         <TouchableOpacity
           style={{ flex: 1 }}
           activeOpacity={1}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.canGoBack() && navigation.goBack()}
         >
           <Image
             fadeDuration={0}
