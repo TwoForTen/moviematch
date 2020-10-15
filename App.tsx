@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import Splash from './src/screens/Splash';
 import UserProvider from './src/context/UserProvider';
+import ConnectionProvider from './src/context/ConnectionProvider';
 import StatusModalProvider from './src/context/StatusModalProvider';
 import SocketProvider from './src/context/SocketProvider';
 import GenreProvider from './src/context/GenreProvider';
@@ -21,19 +22,21 @@ export default function App() {
   }, []);
   return (
     <NavigationContainer>
-      <TokenProvider>
-        <UserProvider>
-          <SocketProvider>
-            <StatusModalProvider>
-              <GenreProvider>
-                <View style={styles.container}>
-                  <Splash />
-                </View>
-              </GenreProvider>
-            </StatusModalProvider>
-          </SocketProvider>
-        </UserProvider>
-      </TokenProvider>
+      <ConnectionProvider>
+        <TokenProvider>
+          <UserProvider>
+            <SocketProvider>
+              <StatusModalProvider>
+                <GenreProvider>
+                  <View style={styles.container}>
+                    <Splash />
+                  </View>
+                </GenreProvider>
+              </StatusModalProvider>
+            </SocketProvider>
+          </UserProvider>
+        </TokenProvider>
+      </ConnectionProvider>
     </NavigationContainer>
   );
 }

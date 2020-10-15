@@ -11,6 +11,7 @@ import Routes from '../routes';
 import { UserContext, User } from '../context/UserProvider';
 import { SocketContext } from '../context/SocketProvider';
 import { TokenContext } from '../context/TokenProvider';
+import { ConnectionContext } from '../context/ConnectionProvider';
 import theme from '../theme';
 import Snackbar from '../components/Snackbar';
 
@@ -21,7 +22,6 @@ export interface SnackbarType {
 }
 
 const Splash = memo(() => {
-  const [connected, setConnected] = useState<boolean>(false);
   const [appReady, setAppReady] = useState<boolean>(false);
   const { token, setToken } = useContext(TokenContext);
   const [{ show, image, movieTitle }, setSnackbar] = useState<SnackbarType>({
@@ -31,6 +31,7 @@ const Splash = memo(() => {
   });
   const { user, setUser } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
+  const { connected, setConnected } = useContext(ConnectionContext);
 
   useEffect(() => {
     const networkInfoUnsub = NetInfo.addEventListener((state) => {

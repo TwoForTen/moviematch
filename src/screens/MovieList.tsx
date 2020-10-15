@@ -13,6 +13,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import theme from '../theme';
 import { StatusModalContext } from '../context/StatusModalProvider';
 import { UserContext, User, initialUserState } from '../context/UserProvider';
+import { ConnectionContext } from '../context/ConnectionProvider';
 import Movie from '../components/Movie/Movie';
 import { RouteProp } from '@react-navigation/native';
 import { ProfileStackParamList } from '../routes/ProfileNavigation';
@@ -25,6 +26,7 @@ interface Props {
 
 const MovieList: React.FC<Props> = ({ route }) => {
   const { statusModal } = useContext(StatusModalContext);
+  const { connected } = useContext(ConnectionContext);
   const { user } = useContext(UserContext);
   const {
     params: { movies },
@@ -33,7 +35,11 @@ const MovieList: React.FC<Props> = ({ route }) => {
   const [focused, setFocused] = useState<boolean>(true);
   const navigation = useNavigation();
 
-  const memoizedUser = useMemo(() => user, [statusModal.isOpen, focused]);
+  const memoizedUser = useMemo(() => user, [
+    statusModal.isOpen,
+    focused,
+    connected,
+  ]);
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;

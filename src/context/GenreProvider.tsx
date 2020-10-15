@@ -5,12 +5,12 @@ export interface Genre {
   name: string;
 }
 
-interface StatusModalContextType {
+interface GenreContextType {
   genre: Genre;
   setGenre: React.Dispatch<React.SetStateAction<Genre>>;
 }
 
-export const GenreContext = createContext<StatusModalContextType>({
+export const GenreContext = createContext<GenreContextType>({
   genre: {
     id: '0',
     name: 'Trending',
