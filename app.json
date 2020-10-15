@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "moviematch",
+    "name": "Moviematch",
     "slug": "moviematch",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "Moviematch",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.1099080056337-kpqhcnq169rpd8h6j5q9h98vtu7quu9t"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

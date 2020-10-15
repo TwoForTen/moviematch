@@ -39,6 +39,8 @@ const Login = () => {
       const result = await Google.logInAsync({
         iosClientId:
           '1099080056337-4b5bgl821i3a05d3sjubbtdugnkjajda.apps.googleusercontent.com',
+        iosStandaloneAppClientId:
+          '1099080056337-kpqhcnq169rpd8h6j5q9h98vtu7quu9t.apps.googleusercontent.com',
         androidClientId:
           '1099080056337-1rocgm0jmdq8qclu6tsnclbqsej9uob1.apps.googleusercontent.com',
         androidStandaloneAppClientId:
