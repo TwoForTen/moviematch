@@ -40,7 +40,7 @@ const MovieList: React.FC<Props> = ({ route }) => {
     const source = CancelToken.source();
     let mounted: boolean = true;
 
-    if (user.matchedWith) {
+    if (user.matchedWith && mounted) {
       axios
         .get(
           `https://moviematch-server.herokuapp.com/api/user?_id=${user.matchedWith.match}`

@@ -3,8 +3,9 @@ import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AppLoading } from 'expo';
 import axios from 'axios';
-import axiosInstance from '../../axiosInstance';
+import NetInfo from '@react-native-community/netinfo';
 
+import axiosInstance from '../../axiosInstance';
 import Login from './Login';
 import Routes from '../routes';
 import { UserContext, User } from '../context/UserProvider';
@@ -20,6 +21,7 @@ export interface SnackbarType {
 }
 
 const Splash = memo(() => {
+  const [connected, setConnected] = useState<boolean>(false);
   const [appReady, setAppReady] = useState<boolean>(false);
   const { token, setToken } = useContext(TokenContext);
   const [{ show, image, movieTitle }, setSnackbar] = useState<SnackbarType>({
@@ -31,7 +33,10 @@ const Splash = memo(() => {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    if (!!user._id) {
+    const networkInfoUnsub = NetInfo.addEventListener((state) => {
+      setConnected(state.isConnected);
+    });
+    if (!!user._id && connected) {
       socket.connect();
       socket.emit('clientJoined', user._id);
       // socket.addEventListener('connect', () => {
@@ -59,7 +64,8 @@ const Splash = memo(() => {
         });
       }
     }
-  }, [user._id, user.matchedWith?.matchId]);
+    return () => networkInfoUnsub();
+  }, [user._id, user.matchedWith?.matchId, connected]);
 
   const userToken = async () => {
     try {
