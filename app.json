@@ -30,8 +30,8 @@
     },
     "android": {
       "package": "com.twoforten.moviematch",
-      "versionCode": 1
-
+      "versionCode": 1,
+      "enableDangerousExperimentalLeanBuilds": true
     }
   }
 }

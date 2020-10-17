@@ -37,6 +37,7 @@ const Login = () => {
   const signIn = async () => {
     try {
       const result = await Google.logInAsync({
+        behavior: 'web',
         iosClientId:
           '1099080056337-4b5bgl821i3a05d3sjubbtdugnkjajda.apps.googleusercontent.com',
         iosStandaloneAppClientId:
@@ -44,7 +45,7 @@ const Login = () => {
         androidClientId:
           '1099080056337-1rocgm0jmdq8qclu6tsnclbqsej9uob1.apps.googleusercontent.com',
         androidStandaloneAppClientId:
-          '1099080056337-vf9dq4spp97g88db90cok0od3n7a706f.apps.googleusercontent.com',
+          '1099080056337-d22emr1qpm35anulkoe15lib541mllol.apps.googleusercontent.com',
         scopes: ['profile', 'email'],
       });
 
