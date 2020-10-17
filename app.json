@@ -31,7 +31,13 @@
     "android": {
       "package": "com.twoforten.moviematch",
       "versionCode": 1,
-      "enableDangerousExperimentalLeanBuilds": true
+      "enableDangerousExperimentalLeanBuilds": true,
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyAQIoORZfBdFFZD_G0ITHGCYwIIRNXxMMo",
+          "certificateHash": "D0:E3:1E:B8:36:3C:89:CA:98:8A:F8:29:13:40:F6:B7:11:3F:83:ED"
+        }
+      }
     }
   }
 }
